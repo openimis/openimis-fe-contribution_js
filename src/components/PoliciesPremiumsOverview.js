@@ -23,7 +23,7 @@ class PoliciesPremiumsOverview extends Component {
 
     componentDidMount() {
         if (!!this.props.policies && !!this.props.policies.length) {
-            this.props.fetchPoliciesPremiums(this.props.policies.map(p => p.policyUuid));
+            this.props.fetchPoliciesPremiums(this.props.modulesManager, this.props.policies.map(p => p.policyUuid));
         }
     }
 

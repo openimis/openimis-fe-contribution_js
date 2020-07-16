@@ -1,9 +1,11 @@
 {
+    "contribution.menu.contributions": "Contributions",
     "contribution.PoliciesPremiums": "Contributions",
     "contribution.premium.payDate": "Payment Date",
     "contribution.premium.amount": "Amount",
     "contribution.premium.payer": "Payer",
     "contribution.premium.payType": "Payment Type",
+    "contribution.premium.payType.null": "Any",
     "contribution.premium.payType.C": "Cash",
     "contribution.premium.payType.B": "Bank Transfer",
     "contribution.premium.payType.M": "Mobile Phone",

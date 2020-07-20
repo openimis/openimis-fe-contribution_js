@@ -1,6 +1,7 @@
 {
     "contribution.menu.contributions": "Contributions",
     "contribution.PoliciesPremiums": "{count} Contributions",
+    "contribution.PoliciesPremiumsOfPolicy": "{count} Contributions of Policy {policy}",
     "contribution.premium.payDate": "Payment Date",
     "contribution.premium.amount": "Amount",
     "contribution.premium.payer": "Payer",

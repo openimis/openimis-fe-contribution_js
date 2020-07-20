@@ -15,3 +15,9 @@ export function fetchPoliciesPremiums(mm, filters) {
     );
     return graphql(payload, 'CONTRIBUTION_POLICES_PREMIUMS');
 }
+
+export function selectPremium(premium) {
+    return dispatch => {
+      dispatch({ type: 'CONTRIBUTION_PREMIUM', payload: premium })
+    }
+  }

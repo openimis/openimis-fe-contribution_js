@@ -11,7 +11,7 @@ import {
     PublishedComponent, Table, PagedDataHandler
 } from "@openimis/fe-core";
 
-import { fetchPoliciesPremiums } from "../actions";
+import { fetchPoliciesPremiums, selectPremium } from "../actions";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -31,7 +31,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((!_.isEqual(prevProps.policies, this.props.policies) && !!this.props.policies && !!this.props.policies.length) ||
-            (!_.isEqual(prevProps.policy, this.props.policy) && !!this.props.policy)
+            (!_.isEqual(prevProps.policy, this.props.policy))
         ) {
             this.query();
         }
@@ -43,6 +43,10 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         } else {
             return [`policyUuids: ${JSON.stringify((this.props.policies || []).map(p => p.policyUuid))}`]
         }
+    }
+
+    onChangeSelection = (i) => {
+        this.props.selectPremium(i[0] || null)
     }
 
     headers = [
@@ -69,16 +73,37 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`)
     ];
 
+    header = () => {
+        const { modulesManager, intl, pageInfo, policy } = this.props;
+        if (!!policy && !!policy.policyUuid) {
+            return formatMessageWithValues(
+                intl, "contribution", "PoliciesPremiumsOfPolicy",
+                {
+                    count: pageInfo.totalCount,
+                    policy: `${policy.productCode}(${formatDateFromISO(modulesManager, intl, policy.effectiveDate)} - ${formatDateFromISO(modulesManager, intl, policy.expiryDate)})`
+                }
+            )
+        } else {
+            return formatMessageWithValues(
+                intl, "contribution", "PoliciesPremiums",
+                { count: pageInfo.totalCount }
+            )
+        }
+    }
+
     render() {
-        const { intl, classes, policiesPremiums, pageInfo } = this.props;
+        const { intl, classes, policiesPremiums, errorPoliciesPremiums, pageInfo } = this.props;
         return (
             <Paper className={classes.paper}>
                 <Table
                     module="contribution"
-                    header={formatMessageWithValues(intl, "contribution", "PoliciesPremiums", { count: pageInfo.totalCount })}
+                    header={this.header()}
                     headers={this.headers}
                     itemFormatters={this.formatters}
                     items={policiesPremiums || []}
+                    error={errorPoliciesPremiums}
+                    withSelection={"single"}
+                    onChangeSelection={this.onChangeSelection}
                     withPagination={true}
                     rowsPerPageOptions={this.rowsPerPageOptions}
                     defaultPageSize={this.defaultPageSize}
@@ -104,7 +129,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchPoliciesPremiums }, dispatch);
+    return bindActionCreators({ fetch: fetchPoliciesPremiums, selectPremium }, dispatch);
 };
 
 export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PoliciesPremiumsOverview)))));

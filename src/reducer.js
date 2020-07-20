@@ -7,6 +7,7 @@ function reducer(
         errorPoliciesPremiums: null,
         policiesPremiumsPageInfo: { totalCount: 0 },
         policiesPremiums: null,
+        premium: null,
     },
     action,
 ) {
@@ -21,6 +22,7 @@ function reducer(
                 policiesPremiums: null,
                 policiesPremiumsPageInfo: { totalCount: 0 },
                 errorPoliciesPremiums: null,
+                premium: null,
             };
         case 'CONTRIBUTION_POLICES_PREMIUMS_RESP':
             return {
@@ -36,6 +38,11 @@ function reducer(
                 ...state,
                 fetchingPoliciesPremiums: false,
                 errorPoliciesPremiums: formatServerError(action.payload)
+            };
+        case 'CONTRIBUTION_PREMIUM':
+            return {
+                ...state,
+                premium: action.payload,
             };
         default:
             return state;

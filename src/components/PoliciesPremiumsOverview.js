@@ -28,15 +28,22 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.defaultPageSize = props.modulesManager.getConf("fe-insuree", "familyPremiumsOverview.defaultPageSize", 2);
     }
 
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!_.isEqual(prevProps.policies, this.props.policies) &&  !!this.props.policies &&  !!this.props.policies.length) {
+        if ((!_.isEqual(prevProps.policies, this.props.policies) && !!this.props.policies && !!this.props.policies.length) ||
+            (!_.isEqual(prevProps.policy, this.props.policy) && !!this.props.policy)
+        ) {
             this.query();
         }
     }
 
-    queryPrms = () => [
-        `policyUuids: ${JSON.stringify((this.props.policies || []).map(p => p.policyUuid))}`
-    ]
+    queryPrms = () => {
+        if (!!this.props.policy) {
+            return [`policyUuids: ${JSON.stringify([this.props.policy.policyUuid])}`]
+        } else {
+            return [`policyUuids: ${JSON.stringify((this.props.policies || []).map(p => p.policyUuid))}`]
+        }
+    }
 
     headers = [
         "contribution.premium.payDate",
@@ -87,6 +94,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 }
 
 const mapStateToProps = state => ({
+    policy: state.policy.policy,
     policies: state.policy.policies,
     fetchingPoliciesPremiums: state.contribution.fetchingPoliciesPremiums,
     fetchedPoliciesPremiums: state.contribution.fetchedPoliciesPremiums,

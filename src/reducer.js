@@ -11,14 +11,15 @@ function reducer(
     action,
 ) {
     switch (action.type) {
-        case 'POLICY_FAMILY_POLICIES_REQ':
         case 'POLICY_INSUREE_POLICIES_REQ':
+        case 'POLICY_FAMILY_POLICIES_REQ':
         case 'CONTRIBUTION_POLICES_PREMIUMS_REQ':
             return {
                 ...state,
                 fetchingPoliciesPremiums: true,
                 fetchedPoliciesPremiums: false,
                 policiesPremiums: null,
+                policiesPremiumsPageInfo: { totalCount: 0 },
                 errorPoliciesPremiums: null,
             };
         case 'CONTRIBUTION_POLICES_PREMIUMS_RESP':
@@ -27,7 +28,7 @@ function reducer(
                 fetchingPoliciesPremiums: false,
                 fetchedPoliciesPremiums: true,
                 policiesPremiums: parseData(action.payload.data.premiumsByPolicies),
-                familiesPremiumsPageInfo: pageInfo(action.payload.data.premiumsByPolicies),
+                policiesPremiumsPageInfo: pageInfo(action.payload.data.premiumsByPolicies),
                 errorPoliciesPremiums: formatGraphQLError(action.payload)
             };
         case 'CONTRIBUTION_POLICES_PREMIUMS_ERR':

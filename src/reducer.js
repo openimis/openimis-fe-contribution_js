@@ -5,6 +5,7 @@ function reducer(
         fetchingPoliciesPremiums: false,
         fetchedPoliciesPremiums: false,
         errorPoliciesPremiums: null,
+        policiesPremiumsPageInfo: { totalCount: 0 },
         policiesPremiums: null,
     },
     action,
@@ -26,6 +27,7 @@ function reducer(
                 fetchingPoliciesPremiums: false,
                 fetchedPoliciesPremiums: true,
                 policiesPremiums: parseData(action.payload.data.premiumsByPolicies),
+                familiesPremiumsPageInfo: pageInfo(action.payload.data.premiumsByPolicies),
                 errorPoliciesPremiums: formatGraphQLError(action.payload)
             };
         case 'CONTRIBUTION_POLICES_PREMIUMS_ERR':

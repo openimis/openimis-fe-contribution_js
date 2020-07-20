@@ -5,9 +5,9 @@ import {
 import _ from "lodash";
 import _uuid from "lodash-uuid";
 
-export function fetchPoliciesPremiums(mm, policyUuids) {
-    let payload = formatPageQuery("premiumsByPolicies",
-        [`policyUuids: ${JSON.stringify(policyUuids)}`],
+export function fetchPoliciesPremiums(mm, filters) {
+    let payload = formatPageQueryWithCount("premiumsByPolicies",
+        filters,
         [
             "id", "uuid", "payDate",
             `payer${mm.getProjection("payer.PayerPicker.projection")}`,

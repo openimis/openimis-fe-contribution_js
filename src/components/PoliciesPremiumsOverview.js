@@ -33,10 +33,12 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.setState({ orderBy: "-payDate" }, e => this.query())
     }
 
+    policiesChanged = (prevProps) =>
+        (!_.isEqual(prevProps.policies, this.props.policies) && !!this.props.policies && !!this.props.policies.length) ||
+        (!_.isEqual(prevProps.policy, this.props.policy))
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if ((!_.isEqual(prevProps.policies, this.props.policies) && !!this.props.policies && !!this.props.policies.length) ||
-            (!_.isEqual(prevProps.policy, this.props.policy))
-        ) {
+        if (this.policiesChanged(prevProps)) {
             this.query();
         }
     }
@@ -45,10 +47,12 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         let prms = [`orderBy: "${this.state.orderBy}"`];
         if (!!this.props.policy) {
             prms.push(`policyUuids: ${JSON.stringify([this.props.policy.policyUuid])}`);
-        } else {
+            return prms;
+        } else if (!!this.props.policies && !!this.props.policies.length) {
             prms.push(`policyUuids: ${JSON.stringify((this.props.policies || []).map(p => p.policyUuid))}`);
+            return prms;
         }
-        return prms;
+        return null;
     }
 
     onChangeSelection = (i) => {
@@ -112,7 +116,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     render() {
-        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo } = this.props;
+        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo, reset } = this.props;
         if (!family.uuid) return null;
         return (
             <Paper className={classes.paper}>

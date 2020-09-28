@@ -25,8 +25,8 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
     constructor(props) {
         super(props);
-        this.rowsPerPageOptions = props.modulesManager.getConf("fe-insuree", "familyPremiumsOverview.rowsPerPageOptions", [2, 5, 10, 20]);
-        this.defaultPageSize = props.modulesManager.getConf("fe-insuree", "familyPremiumsOverview.defaultPageSize", 2);
+        this.rowsPerPageOptions = props.modulesManager.getConf("fe-contribution", "familyPremiumsOverview.rowsPerPageOptions", [2, 5, 10, 20]);
+        this.defaultPageSize = props.modulesManager.getConf("fe-contribution", "familyPremiumsOverview.defaultPageSize", 2);
     }
 
     componentDidMount() {

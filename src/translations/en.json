@@ -13,5 +13,7 @@
     "contribution.premium.receipt": "Receipt No.",
     "contribution.premium.category": "Contribution Category",
     "contribution.premium.category.photoFee": "Photo Fee",
-    "contribution.premium.category.contribution": "Contribution"
+    "contribution.premium.category.contribution": "Contribution",
+    "contribution.deletePremium.tooltip": "Delete premium",
+    "contribution.addNewPremium.tooltip": "Add new premium"
 }

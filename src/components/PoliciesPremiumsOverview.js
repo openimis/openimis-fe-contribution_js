@@ -4,10 +4,15 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import _ from "lodash";
-import { Paper } from "@material-ui/core";
+import { Paper, IconButton, Grid, Divider, Typography } from "@material-ui/core";
+import {
+    Add as AddIcon,
+    Delete as DeleteIcon,
+} from '@material-ui/icons';
+
 import {
     formatMessage, formatMessageWithValues,
-    formatAmount, formatDateFromISO, withModulesManager,
+    formatAmount, formatDateFromISO, withModulesManager, withTooltip,
     formatSorter, sort,
     PublishedComponent, Table, PagedDataHandler
 } from "@openimis/fe-core";
@@ -18,6 +23,7 @@ const styles = theme => ({
     paper: theme.paper.paper,
     paperHeader: theme.paper.header,
     paperHeaderAction: theme.paper.action,
+    tableTitle: theme.table.title,
     fab: theme.fab,
 });
 
@@ -31,6 +37,13 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
     componentDidMount() {
         this.setState({ orderBy: "-payDate" }, e => this.query())
+    }
+
+    addNewPremium = () => alert("Will be implemented along Contribution module migration!")
+    deletePremium = () => alert("Will be implemented along Contribution module migration!")
+
+    onDoubleClick = (i, newTab = false) => {
+        alert("Will be implemented along Contribution module migration!")
     }
 
     policiesChanged = (prevProps) =>
@@ -66,6 +79,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         "contribution.premium.payType",
         "contribution.premium.receipt",
         "contribution.premium.category",
+        "",
     ];
 
     sorter = (attr, asc = true) => [
@@ -94,7 +108,8 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
             pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={p.payType}
         />,
         p => p.receipt,
-        p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`)
+        p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`),
+        p => withTooltip(<IconButton onClick={this.deletePremium}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
     ];
 
     header = () => {
@@ -116,18 +131,45 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     render() {
-        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo, reset } = this.props;
+        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo, reset, readOnly } = this.props;
         if (!family.uuid) return null;
+
+        let actions = !!readOnly ? [] : [
+            {
+                button: <IconButton onClick={this.addNewPremium}><AddIcon /></IconButton>,
+                tooltip: formatMessage(intl, "contribution", "addNewPremium.tooltip")
+            }
+        ];
+
         return (
             <Paper className={classes.paper}>
+                <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
+                    <Grid item xs={8}>
+                        <Typography className={classes.tableTitle}>
+                            {this.header()}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Grid container direction="row" justify="flex-end">
+                            {actions.map((a, idx) => {
+                                return (
+                                    <Grid item key={`form-action-${idx}`} className={classes.paperHeaderAction}>
+                                        {withTooltip(a.button, a.tooltip)}
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Divider />
                 <Table
                     module="contribution"
-                    header={this.header()}
                     headerActions={this.headerActions}
                     headers={this.headers}
                     itemFormatters={this.formatters}
                     items={policiesPremiums || []}
                     error={errorPoliciesPremiums}
+                    onDoubleClick={this.onDoubleClick}
                     withSelection={"single"}
                     onChangeSelection={this.onChangeSelection}
                     withPagination={true}

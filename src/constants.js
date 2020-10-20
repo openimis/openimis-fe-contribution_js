@@ -1,4 +1,4 @@
-export const RIGHT_CONTRIBUTION = 101300
+export const RIGHT_CONTRIBUTION = 101301 // supposed to be 101300 ... but in practice
 export const RIGHT_CONTRIBUTION_SEARCH = 101301
 export const RIGHT_CONTRIBUTION_ADD = 101302
 export const RIGHT_CONTRIBUTION_EDIT = 101303

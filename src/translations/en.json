@@ -15,5 +15,7 @@
     "contribution.premium.category.photoFee": "Photo Fee",
     "contribution.premium.category.contribution": "Contribution",
     "contribution.deletePremium.tooltip": "Delete premium",
-    "contribution.addNewPremium.tooltip": "Add new premium"
+    "contribution.addNewPremium.tooltip": "Add new premium",
+    "contribution.addNewContributionTooltip": "Add new contribution",
+    "contribution.contributionSummaries": "{count} contributions Found"
 }

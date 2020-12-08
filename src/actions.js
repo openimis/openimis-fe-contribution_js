@@ -16,6 +16,18 @@ export function fetchPoliciesPremiums(mm, filters) {
     return graphql(payload, 'CONTRIBUTION_POLICES_PREMIUMS');
 }
 
+export function fetchContributionsSummaries(mm, filters) {
+    let projections = [
+      "id", "uuid",
+    ]
+    const payload = formatPageQueryWithCount("premiums",
+      filters,
+      projections
+    );
+    return graphql(payload, 'CONTRIBUTION_CONTRIBUTIONS');
+  }
+  
+
 export function selectPremium(premium) {
     return dispatch => {
       dispatch({ type: 'CONTRIBUTION_PREMIUM', payload: premium })

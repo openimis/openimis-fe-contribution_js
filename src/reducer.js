@@ -8,6 +8,13 @@ function reducer(
         policiesPremiumsPageInfo: { totalCount: 0 },
         policiesPremiums: null,
         premium: null,
+        contributions: [],
+        contributionsPageInfo: { totalCount: 0 },
+        fetchingContributions: false,
+        fetchedContributions: false,
+        errorContributions: null,
+        submittingMutation: false,
+        mutation: {},
     },
     action,
 ) {
@@ -53,6 +60,11 @@ function reducer(
             return {
                 ...state,
                 premium: action.payload,
+            };
+        case 'CONTRIBUTION_CONTRIBUTIONS':
+            return {
+                ...state,
+                contributions: action.payload,
             };
         default:
             return state;

@@ -61,10 +61,30 @@ function reducer(
                 ...state,
                 premium: action.payload,
             };
-        case 'CONTRIBUTION_CONTRIBUTIONS':
+        case 'CONTRIBUTION_CONTRIBUTIONS_REQ':
             return {
                 ...state,
-                contributions: action.payload,
+                fetchingContributions: true,
+                fetchedContributions: false,
+                contributions: null,
+                contributionsPageInfo: { totalCount: 0 },
+                errorContributions: null,
+            };
+        case 'CONTRIBUTION_CONTRIBUTIONS_ERR':
+            return {
+                ...state,
+                fetchingContributions: false,
+                errorContributions: formatServerError(action.payload)
+            };
+        case 'CONTRIBUTION_CONTRIBUTIONS_RESP':
+            console.log('CONTRIBUTION_CONTRIBUTIONS', action.payload)
+            return {
+                ...state,
+                fetchingContributions: false,
+                fetchedContributions: true,
+                contributions: parseData(action.payload.data.premiums),
+                contributionsPageInfo: pageInfo(action.payload.data.premiums),
+                errorContributions: formatGraphQLError(action.payload)
             };
         default:
             return state;

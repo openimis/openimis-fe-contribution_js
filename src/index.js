@@ -5,6 +5,7 @@ import ContributionsPage from "./pages/ContributionsPage";
 import ContributionOverviewPage from "./pages/ContributionOverviewPage";
 import PoliciesPremiumsOverview from "./components/PoliciesPremiumsOverview";
 import PremiumPaymentTypePicker from "./pickers/PremiumPaymentTypePicker";
+import PremiumCategoryPicker from "./pickers/PremiumCategoryPicker";
 import messages_en from "./translations/en.json";
 import reducer from "./reducer";
 
@@ -19,6 +20,7 @@ const DEFAULT_CONFIG = {
 
   "refs": [
     { key: "contribution.PremiumPaymentTypePicker", ref: PremiumPaymentTypePicker },
+    { key: "contribution.PremiumCategoryPicker", ref: PremiumCategoryPicker },
     { key: "contribution.contributionOverview", ref: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW },
   ],
   "core.Router": [

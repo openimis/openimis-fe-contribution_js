@@ -18,7 +18,9 @@ export function fetchPoliciesPremiums(mm, filters) {
 
 export function fetchContributionsSummaries(mm, filters) {
     let projections = [
-      "id", "uuid",
+      "id", "uuid","payDate","amount", "payType", "receipt", "isPhotoFee",
+      `payer${mm.getProjection("payer.PayerPicker.projection")}`,
+      "policy{id,uuid,family{id,headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}}}"
     ]
     const payload = formatPageQueryWithCount("premiums",
       filters,

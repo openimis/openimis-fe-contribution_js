@@ -8,7 +8,7 @@ class PremiumPaymentTypePicker extends Component {
     render() {
         return <ConstantBasedPicker
             module="contribution"
-            label="premium.payType"
+            label="contribution.payType"
             constants={PREMIUM_PAYMENT_TYPES}
             {...this.props}
         />

@@ -17,8 +17,8 @@ const styles = theme => ({
 
 class ContributionsPage extends Component {
 
-    onDoubleClick = (f, newTab = false) => {
-        historyPush(this.props.modulesManager, this.props.history, "contribution.contributionOverview", [f.uuid], newTab)
+    onDoubleClick = (c, newTab = false) => {
+        historyPush(this.props.modulesManager, this.props.history, "contribution.contributionOverview", [c.uuid], newTab)
     }
 
     onAdd = () => {
@@ -33,7 +33,7 @@ class ContributionsPage extends Component {
                     cacheFiltersKey="contributionsPageFiltersCache"
                     onDoubleClick={this.onDoubleClick}
                 />
-                {rights.includes(RIGHT_CONTRIBUTION_ADD) &&
+                {/* {rights.includes(RIGHT_CONTRIBUTION_ADD) &&
                     withTooltip(
                         <div className={classes.fab}>
                             <Fab color="primary" onClick={this.onAdd}>
@@ -42,7 +42,7 @@ class ContributionsPage extends Component {
                         </div>,
                         formatMessage(intl, "contribution", "addNewContributionTooltip")
                     )
-                }
+                } */}
             </div>
         )
     }

@@ -21,6 +21,7 @@ const DEFAULT_CONFIG = {
   "refs": [
     { key: "contribution.PremiumPaymentTypePicker", ref: PremiumPaymentTypePicker },
     { key: "contribution.PremiumCategoryPicker", ref: PremiumCategoryPicker },
+    { key: "contribution.contributions", ref: ROUTE_CONTRIBUTION_CONTRIBUTIONS },
     { key: "contribution.contributionOverview", ref: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW },
   ],
   "core.Router": [

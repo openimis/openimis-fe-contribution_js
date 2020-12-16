@@ -73,12 +73,12 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     headers = [
-        "contribution.premium.payDate",
-        "contribution.premium.payer",
-        "contribution.premium.amount",
-        "contribution.premium.payType",
-        "contribution.premium.receipt",
-        "contribution.premium.category",
+        "contribution.payDate",
+        "contribution.payer",
+        "contribution.amount",
+        "contribution.payType",
+        "contribution.receipt",
+        "contribution.category",
         "",
     ];
 

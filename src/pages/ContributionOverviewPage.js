@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Edit as EditIcon } from "@material-ui/icons";
 import { historyPush, withModulesManager, withHistory } from "@openimis/fe-core";
-// import FamilyPage from "./FamilyPage";
+import ContributionPage from "./ContributionPage";
 
 
 class ContributionOverviewPage extends Component {
@@ -13,8 +13,7 @@ class ContributionOverviewPage extends Component {
             icon: <EditIcon />,
             onlyIfDirty: false
         }]
-        return <div>OVERVIEW {contribution_uuid}</div>
-        // return <FamilyPage {...this.props} readOnly={true} overview={true} actions={actions} />
+        return <ContributionPage {...this.props} readOnly={true} overview={true} actions={actions} />
     }
 }
 

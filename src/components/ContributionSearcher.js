@@ -3,6 +3,9 @@ import React, { Component, Fragment } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
+import {  IconButton, Tooltip } from "@material-ui/core";
+import TabIcon from "@material-ui/icons/Tab";
+
 import ContributionFilter from './ContributionFilter';
 import {
     withModulesManager, formatMessageWithValues, formatDateFromISO, formatMessage,
@@ -64,12 +67,13 @@ class ContributionSearcher extends Component {
 
     headers = (filters) => {
         var h = [
-            "contribution.premium.payDate",
-            "contribution.premium.payer",
-            "contribution.premium.amount",
-            "contribution.premium.payType",
-            "contribution.premium.receipt",
-            "contribution.premium.category",
+            "contribution.payDate",
+            "contribution.payer",
+            "contribution.amount",
+            "contribution.payType",
+            "contribution.receipt",
+            "contribution.category",
+            "contribution.openNewTabHead"
         ]
         return h;
     }
@@ -101,18 +105,24 @@ class ContributionSearcher extends Component {
 
     itemFormatters = () => {
         return [
-            p => formatDateFromISO(this.props.modulesManager, this.props.intl, p.payDate),
-            p => <PublishedComponent
+            c => formatDateFromISO(this.props.modulesManager, this.props.intl, c.payDate),
+            c => <PublishedComponent
                 readOnly={true}
-                pubRef="payer.PayerPicker" withLabel={false} value={p.payer}
+                pubRef="payer.PayerPicker" withLabel={false} value={c.payer}
             />,
-            p => formatAmount(this.props.intl, p.amount),
-            p => <PublishedComponent
+            c => formatAmount(this.props.intl, c.amount),
+            c => <PublishedComponent
                 readOnly={true}
-                pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={p.payType}
+                pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={c.payType}
             />,
-            p => p.receipt,
-            p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`),
+            c => c.receipt,
+            c => formatMessage(this.props.intl, "contribution", `contribution.category.${!!c.isPhotoFee ? "photoFee" : "contribution"}`),
+
+            c => (
+                <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
+                    <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
+                </Tooltip>
+            )
             // p => withTooltip(<IconButton onClick={this.deletePremium}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
         ];
     }
@@ -155,7 +165,7 @@ class ContributionSearcher extends Component {
                     sorts={this.sorts}
                     rowDisabled={this.rowDisabled}
                     rowLocked={this.rowLocked}
-                    onDoubleClick={f => !f.clientMutationId && onDoubleClick(f)}
+                    onDoubleClick={c => !c.clientMutationId && onDoubleClick(c)}
                     reset={this.state.reset}
                 />
             </Fragment>

@@ -8,7 +8,7 @@ class PremiumCategoryPicker extends Component {
     render() {
         return <ConstantBasedPicker
             module="contribution"
-            label="premium.category"
+            label="contribution.category"
             constants={PREMIUM_CATEGORIES}
             {...this.props}
         />

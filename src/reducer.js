@@ -88,35 +88,35 @@ function reducer(
                 contributionsPageInfo: pageInfo(action.payload.data.premiums),
                 errorContributions: formatGraphQLError(action.payload)
             };
-            case 'CONTRIBUTION_OVERVIEW_REQ':
-                return {
-                    ...state,
-                    fetchingContribution: true,
-                    fetchedContribution: false,
-                    contribution: null,
-                    errorContribution: null,
-                };
-            case 'CONTRIBUTION_OVERVIEW_RESP':
-                var contributions = parseData(action.payload.data.premiums);
-                return {
-                    ...state,
-                    fetchingContribution: false,
-                    fetchedContribution: true,
-                    contribution: (!!contributions && contributions.length > 0) ? contributions[0] : null,
-                    errorContribution: formatGraphQLError(action.payload)
-                };
-            case 'CONTRIBUTION_OVERVIEW_ERR':
-                return {
-                    ...state,
-                    fetchingContribution: false,
-                    errorContribution: formatServerError(action.payload)
-                };
-            case 'CONTRIBUTION_NEW':
-                return {
-                    ...state,
-                    contributionsPageInfo : { totalCount: 0 },
-                    contribution: null,
-                };
+        case 'CONTRIBUTION_OVERVIEW_REQ':
+            return {
+                ...state,
+                fetchingContribution: true,
+                fetchedContribution: false,
+                contribution: null,
+                errorContribution: null,
+            };
+        case 'CONTRIBUTION_OVERVIEW_RESP':
+            var contributions = parseData(action.payload.data.premiums);
+            return {
+                ...state,
+                fetchingContribution: false,
+                fetchedContribution: true,
+                contribution: (!!contributions && contributions.length > 0) ? contributions[0] : null,
+                errorContribution: formatGraphQLError(action.payload)
+            };
+        case 'CONTRIBUTION_OVERVIEW_ERR':
+            return {
+                ...state,
+                fetchingContribution: false,
+                errorContribution: formatServerError(action.payload)
+            };
+        case 'CONTRIBUTION_NEW':
+            return {
+                ...state,
+                contributionsPageInfo : { totalCount: 0 },
+                contribution: null,
+            };
         default:
             return state;
     }

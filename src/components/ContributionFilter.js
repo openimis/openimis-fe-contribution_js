@@ -70,7 +70,7 @@ class ContributionFilter extends Component {
         return (
             <section className={classes.form}>
                 <Grid container >
-                    <ControlledField module="insuree" id="ContributionFilter.location" field={
+                    <ControlledField module="contribution" id="ContributionFilter.location" field={
                         <Grid item xs={12}>
                             <PublishedComponent
                                 pubRef="location.DetailedLocationFilter"
@@ -117,20 +117,7 @@ class ContributionFilter extends Component {
                     } />
                     <ControlledField module="contribution" id="ContributionFilter.payer" field={
                         <Grid item xs={4} className={classes.item}>
-                            <TextInput
-                                module="contribution"
-                                label="contribution.payer"
-                                name="payer"
-                                value={this._filterValue("payer")}
-                                onChange={v => this.debouncedOnChangeFilter([
-                                    {
-                                        id: "payer",
-                                        value: v,
-                                        filter: `payer_Name_Icontains: "${v}"`
-                                    }
-                                ])}
-                            />
-                            {/* <PublishedComponent
+                            <PublishedComponent
                                 pubRef="payer.PayerPicker"
                                 withNull={true}
                                 value={this._filterValue("payer")}
@@ -138,10 +125,10 @@ class ContributionFilter extends Component {
                                     {
                                         id: "payer",
                                         value: v,
-                                        filter: `payer_id_exact: "${v}"`
+                                        filter: `payer_Id: "${v && v.id ? v.id : null}"`
                                     }
                                 ])}
-                            /> */}
+                            />
                         </Grid>
                     } />
                     {["amount_Gte", "amount_Lte"].map(a => (

@@ -57,14 +57,13 @@ class ContributionMasterPanel extends FormPanel {
                         />
                     </Grid>
                     <Grid item xs={3} className={classes.item}>
-                            <TextInput
-                                module="contribution"
-                                label="contribution.payer"
-                                name="payer"
-                                readOnly={readOnly}
-                                value={!edited ? "" : edited.payer}
-                                onChange={c => this.updateAttribute('payer', c)}
-                            />
+                        <PublishedComponent
+                            pubRef="payer.PayerPicker"
+                            withNull={true}
+                            readOnly={readOnly}
+                            value={!edited ? "" : edited.payer}
+                            onChange={p => this.updateAttribute('payer', p)}
+                        />
                     </Grid>
                     <Grid item xs={3} className={classes.item}>
                         <AmountInput

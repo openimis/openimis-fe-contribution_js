@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "rollup -c",
+    "prepare": "yarn run build",
     "start": "rollup -c -w"
   },
   "peerDependency": {

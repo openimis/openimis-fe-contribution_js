@@ -4,17 +4,18 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
 import {  IconButton, Tooltip } from "@material-ui/core";
-import TabIcon from "@material-ui/icons/Tab";
-
+import {
+   Tab as TabIcon, Delete as DeleteIcon
+} from '@material-ui/icons';
 import ContributionFilter from './ContributionFilter';
 import {
     withModulesManager, formatMessageWithValues, formatDateFromISO, formatMessage,
-    Searcher, PublishedComponent, formatAmount, withTooltip,
+    Searcher, PublishedComponent, formatAmount, journalize,
 } from "@openimis/fe-core";
 
-import { fetchContributionsSummaries } from "../actions";
+import { fetchContributionsSummaries, deleteContribution } from "../actions";
 import { RIGHT_CONTRIBUTION_DELETE } from "../constants";
-// import DeleteFamilyDialog from "./DeleteFamilyDialog";
+import DeleteContributionDialog from "./DeleteContributionDialog";
 
 const FAMILY_SEARCHER_CONTRIBUTION_KEY = "contribution.ContributionSearcher";
 
@@ -32,7 +33,7 @@ class ContributionSearcher extends Component {
         this.locationLevels = 4;
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps) {
         if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
             this.setState({ reset: this.state.reset + 1 });
@@ -90,21 +91,24 @@ class ContributionSearcher extends Component {
         return results;
     }
 
-    // deleteContribution = (deleteMembers) => {
-    //     let family = this.state.deleteContribution;
-    //     this.setState(
-    //         { deleteContribution: null },
-    //         (e) => {
-    //             this.props.deleteContribution(
-    //                 this.props.modulesManager,
-    //                 family,
-    //                 deleteMembers,
-    //                 formatMessageWithValues(this.props.intl, "insuree", "deleteContribution.mutationLabel", { label: familyLabel(family) }))
-    //         })
-    // }
+    deleteContribution = () => {
+        let contribution = this.state.deleteContribution;
+        this.setState(
+            { deleteContribution: null },
+            (e) => {
+                this.props.deleteContribution(
+                    this.props.modulesManager,
+                    contribution,
+                    formatMessage(this.props.intl, "contribution", "deleteContributionDialog.title"))
+            })
+    }
+
+    confirmDelete = deleteContribution => {
+        this.setState({ deleteContribution,})
+    }
 
     itemFormatters = () => {
-        return [
+        const formatters =  [
             c => formatDateFromISO(this.props.modulesManager, this.props.intl, c.payDate),
             c => <PublishedComponent
                 readOnly={true}
@@ -119,12 +123,22 @@ class ContributionSearcher extends Component {
             c => formatMessage(this.props.intl, "contribution", `contribution.category.${!!c.isPhotoFee ? "photoFee" : "contribution"}`),
 
             c => (
-                <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
-                    <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
-                </Tooltip>
+                <>
+                    <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
+                        <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
+                    </Tooltip>
+                    {
+                        !!this.props.rights.includes(RIGHT_CONTRIBUTION_DELETE) &&
+                            (
+                                <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
+                                    <IconButton onClick={() => this.confirmDelete(c)}><DeleteIcon /></IconButton>
+                                </Tooltip>
+                            )
+                    }
+                </>
             )
-            // p => withTooltip(<IconButton onClick={this.deletePremium}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
         ];
+        return formatters;
     }
 
     rowDisabled = (selection, i) => !!i.validityTo
@@ -138,10 +152,10 @@ class ContributionSearcher extends Component {
         let count = contributionsPageInfo.totalCount;
         return (
             <Fragment>
-                {/* <DeleteFamilyDialog
-                    family={this.state.deleteContribution}
+                <DeleteContributionDialog
+                    contribution={this.state.deleteContribution}
                     onConfirm={this.deleteContribution}
-                    onCancel={e => this.setState({ deleteContribution: null })} /> */}
+                    onCancel={e => this.setState({ deleteContribution: null })} />
                 <Searcher
                     module="contribution"
                     cacheFiltersKey={cacheFiltersKey}
@@ -187,7 +201,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators(
-        { fetchContributionsSummaries },
+        { fetchContributionsSummaries, deleteContribution, journalize },
         dispatch);
 };
 

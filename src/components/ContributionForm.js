@@ -9,21 +9,15 @@ import {
     Form, ProgressOrError, journalize, coreConfirm
 } from "@openimis/fe-core";
 import { RIGHT_CONTRIBUTION, RIGHT_CONTRIBUTION_EDIT } from "../constants";
-// import FamilyMasterPanel from "./FamilyMasterPanel";
 
 import { fetchContribution, newContribution, createContribution } from "../actions";
-// import FamilyInsureesOverview from "./FamilyInsureesOverview";
 import ContributionMasterPanel from "./ContributionMasterPanel";
-
-// import { insureeLabel } from "../utils/utils";
 
 const styles = theme => ({
     lockedPage: theme.page.locked
 });
 
-const INSUREE_FAMILY_PANELS_CONTRIBUTION_KEY = "insuree.Family.panels"
-const INSUREE_FAMILY_OVERVIEW_PANELS_CONTRIBUTION_KEY = "insuree.FamilyOverview.panels"
-const INSUREE_FAMILY_OVERVIEW_CONTRIBUTED_MUTATIONS_KEY = "insuree.FamilyOverview.mutations"
+const CONTRIBUTION_OVERVIEW_MUTATIONS_KEY = "contribution.ContributionOverview.mutations"
 
 class ContributionForm extends Component {
 
@@ -59,11 +53,7 @@ class ContributionForm extends Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        // if ((prevState.contribution && prevState.contribution.headInsuree && prevState.contribution.headInsuree.chfId)
-        //     !== (this.state.contribution && this.state.contribution.headInsuree && this.state.contribution.headInsuree.chfId)) {
-        //     document.title = formatMessageWithValues(this.props.intl, "insuree", !!this.props.overview ? "FamilyOverview.title" : "Family.title", { label: insureeLabel(this.state.contribution.headInsuree) })
-        // }
+    componentDidUpdate(prevProps) {
         if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
             const { contribution } = this.props;
             contribution.ext = !!contribution.jsonExt ? JSON.parse(contribution.jsonExt) : {};
@@ -75,7 +65,6 @@ class ContributionForm extends Component {
                 newContribution: false
             });
         } else if (prevProps.contribution_uuid && !this.props.contribution_uuid) {
-            // document.title = formatMessageWithValues(this.props.intl, "insuree", !!this.props.overview ? "FamilyOverview.title" : "Family.title", { label: insureeLabel(this.state.contribution.headInsuree) })
             this.setState({ contribution: this._newContribution(), newContribution: true, lockNew: false, contribution_uuid: null });
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
@@ -101,24 +90,24 @@ class ContributionForm extends Component {
     //     )
     // }
 
-    // reload = () => {
-    //     this.props.fetchContribution(
-    //         this.props.modulesManager,
-    //         this.state.family_uuid,
-    //         !!this.state.family.headInsuree ? this.state.family.headInsuree.chfId : null
-    //     );
-    // }
+    reload = () => {
+        this.props.fetchContribution(
+            this.props.modulesManager,
+            this.state.contribution_uuid,
+            !!this.state.contribution.headInsuree ? this.state.contribution.headInsuree.chfId : null
+        );
+    }
 
     canSave = () => {
         if (!this.state.contribution.payType) return false;
         return true;
     }
 
-    // _save = (family) => {
-    //     this.setState(
-    //         { lockNew: !family.uuid }, // avoid duplicates
-    //         e => this.props.save(family))
-    // }
+    _save = (contribution_uuid) => {
+        this.setState(
+            { lockNew: !contribution_uuid.uuid }, // avoid duplicates
+            e => this.props.save(contribution_uuid))
+    }
 
     onEditedChanged = contribution => {
         this.setState({ contribution, newContribution: false })
@@ -144,17 +133,16 @@ class ContributionForm extends Component {
             fetchingContribution,
             fetchedContribution,
             errorContribution,
-            insuree,
-            overview = false, openFamilyButton, readOnly = false,
+            overview = false,
+            readOnly = false,
             add, save, back, mutation } = this.props;
         const { contribution } = this.state;
-        console.log('contribution', contribution)
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         const runningMutation = !!contribution && !!contribution.clientMutationId
-        // let contributedMutations = modulesManager.getContribs(INSUREE_FAMILY_OVERVIEW_CONTRIBUTED_MUTATIONS_KEY);
-        // for (let i = 0; i < contributedMutations.length && !runningMutation; i++) {
-        //     runningMutation = contributedMutations[i](state)
-        // }
+        let contributedMutations = modulesManager.getContribs(CONTRIBUTION_OVERVIEW_MUTATIONS_KEY);
+        for (let i = 0; i < contributedMutations.length && !runningMutation; i++) {
+            runningMutation = contributedMutations[i](state)
+        }
         const actions = [{
             doIt: this.reload,
             icon: <ReplayIcon />,
@@ -174,11 +162,8 @@ class ContributionForm extends Component {
                         add={!!add && !this.state.newContribution ? this._add : null}
                         readOnly={readOnly || runningMutation || !!contribution.validityTo}
                         actions={actions}
-                        // openFamilyButton={openFamilyButton}
                         overview={overview}
                         HeadPanel={ContributionMasterPanel}
-                        // Panels={overview ? [FamilyInsureesOverview] : [HeadInsureeMasterPanel]}
-                        // contributedPanelsKey={overview ? INSUREE_FAMILY_OVERVIEW_PANELS_CONTRIBUTION_KEY : INSUREE_FAMILY_PANELS_CONTRIBUTION_KEY}
                         contribution={contribution}
                         onEditedChanged={this.onEditedChanged}
                         canSave={this.canSave}

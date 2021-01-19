@@ -26,10 +26,9 @@ class ContributionMasterPanel extends FormPanel {
             intl,
             classes,
             edited,
-            // readOnly,
+            readOnly,
             overview,
         } = this.props;
-        const readOnly = true;
         return (
             <Fragment>
                 <Grid container className={classes.item}>
@@ -37,9 +36,15 @@ class ContributionMasterPanel extends FormPanel {
                         <PublishedComponent
                             pubRef="location.DetailedLocation"
                             withNull={true}
-                            readOnly={readOnly}
+                            readOnly={true}
                             value={edited && edited.policy && edited.policy.family ? edited.policy.family.location : null}
-                            onChange={c => this.updateAttribute('location', c)}
+                            onChange={c => this.updateAttribute('policy', {
+                                ...edited.policy,
+                                family: {
+                                    ...edited.policy.family,
+                                    location: c,
+                                }
+                            })}
                             filterLabels={false}
                         />
                     </Grid>
@@ -95,10 +100,12 @@ class ContributionMasterPanel extends FormPanel {
                     <Grid item xs={3} className={classes.item}>
                         <PublishedComponent
                             pubRef="contribution.PremiumCategoryPicker"
-                            withNull={true}
+                            withNull={false}
                             readOnly={readOnly}
-                            value={!edited ? "" : edited.isPhotoFee}
-                            onChange={c => this.updateAttribute('isPhotoFee', c !== 'contribution')}
+                            value={edited.isPhotoFee ? 'photoFee' : 'contribution'}
+                            onChange={c => {
+                                return this.updateAttribute('isPhotoFee', c === 'photoFee');
+                            }}
                         />
                     </Grid>
                 </Grid>

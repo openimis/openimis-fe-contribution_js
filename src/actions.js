@@ -1,6 +1,10 @@
 import {
-    baseApiUrl, graphql, formatQuery, formatPageQuery, formatPageQueryWithCount,
-    formatMutation, decodeId, openBlob, formatJsonField
+    graphql,
+    formatPageQuery,
+    formatPageQueryWithCount,
+    formatMutation,
+    formatJsonField,
+    formatGQLString,
 } from "@openimis/fe-core";
 import _ from "lodash";
 import _uuid from "lodash-uuid";
@@ -18,7 +22,14 @@ const POLICY_SUMMARY_PROJECTION = mm => [
 ]
 
 const CONTRIBUTION_FULL_PROJECTION = mm => [
-  "id", "uuid","payDate","amount", "payType", "receipt", "isPhotoFee",
+  "id",
+  "uuid",
+  "payDate",
+  "amount",
+  "payType",
+  "receipt",
+  "isPhotoFee",
+  "clientMutationId",
   `payer${mm.getProjection("payer.PayerPicker.projection")}`,
   `policy{${POLICY_SUMMARY_PROJECTION(mm).join(",")}}`,
 ];
@@ -36,7 +47,14 @@ export function fetchPoliciesPremiums(mm, filters) {
 
 export function fetchContributionsSummaries(mm, filters) {
     let projections = [
-      "id", "uuid","payDate","amount", "payType", "receipt", "isPhotoFee",
+      "id",
+      "uuid",
+      "payDate",
+      "amount",
+      "payType",
+      "receipt",
+      "isPhotoFee",
+      "clientMutationId",
       `payer${mm.getProjection("payer.PayerPicker.projection")}`,
     ];
     const payload = formatPageQueryWithCount("premiums",
@@ -45,7 +63,7 @@ export function fetchContributionsSummaries(mm, filters) {
     );
     return graphql(payload, 'CONTRIBUTION_CONTRIBUTIONS');
   }
-  
+
 
 export function selectPremium(premium) {
     return dispatch => {
@@ -54,19 +72,18 @@ export function selectPremium(premium) {
   }
 
 export function formatContributionGQL(mm, contribution) {
-  let headInsuree = contribution.headInsuree;
-  headInsuree["head"] = true;
-  return `  
+  const req = `
     ${contribution.uuid !== undefined && contribution.uuid !== null ? `uuid: "${contribution.uuid}"` : ''}
-    headInsuree: {${formatInsureeGQL(mm, headInsuree)}}
-    ${!!contribution.location ? `locationId: ${decodeId(contribution.location.id)}` : ""}
-    poverty: ${!!contribution.poverty}
-    ${!!contribution.familyType && !!contribution.familyType.code ? `familyTypeId: "${contribution.familyType.code}"` : ""}
-    ${!!contribution.address ? `address: "${formatGQLString(contribution.address)}"` : ""}
-    ${!!contribution.confirmationType && !!contribution.confirmationType.code ? `confirmationTypeId: "${contribution.confirmationType.code}"` : ""}
-    ${!!contribution.confirmationNo ? `confirmationNo: "${formatGQLString(contribution.confirmationNo)}"` : ""}
+    ${!!contribution.receipt ? `receipt: "${formatGQLString(contribution.receipt)}"` : ""}
+    ${!!contribution.payDate ? `payDate: "${contribution.payDate}"` : ""}
+    ${!!contribution.payType ? `payType: "${contribution.payType}"` : ""}
+    ${`isPhotoFee: ${contribution.isPhotoFee}`}
+    ${!!contribution.amount ? `amount: "${contribution.amount}"` : ""}
+    ${!!contribution.payer ? `payerUuid: "${contribution.payer.uuid}"` : ""}
     ${!!contribution.jsonExt ? `jsonExt: ${formatJsonField(contribution.jsonExt)}` : ""}
+    ${!!contribution.policy ? `policyUuid: "${formatGQLString(contribution.policy.uuid)}"` : ""}
   `
+  return req;
 }
 
 export function fetchContribution(mm, contributionUuid) {
@@ -88,7 +105,7 @@ export function newContribution() {
 }
 
 export function createContribution(mm, contribution, clientMutationLabel) {
-  let mutation = formatMutation("createContribution", formatContributionGQL(mm, contribution), clientMutationLabel);
+  let mutation = formatMutation("createPremium", formatContributionGQL(mm, contribution), clientMutationLabel);
   var requestedDateTime = new Date();
   return graphql(
     mutation.payload,
@@ -102,7 +119,7 @@ export function createContribution(mm, contribution, clientMutationLabel) {
 }
 
 export function updateContribution(mm, contribution, clientMutationLabel) {
-  let mutation = formatMutation("updateContribution", formatContributionGQL(mm, contribution), clientMutationLabel);
+  let mutation = formatMutation("updatePremium", formatContributionGQL(mm, contribution), clientMutationLabel);
   var requestedDateTime = new Date();
   return graphql(
     mutation.payload,
@@ -111,8 +128,24 @@ export function updateContribution(mm, contribution, clientMutationLabel) {
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,
       requestedDateTime,
-      fcontributionUuid: contribution.uuid,
+      contributionUuid: contribution.uuid,
     }
   )
 }
 
+
+export function deleteContribution(mm, contribution, clientMutationLabel) {
+  let mutation = formatMutation("deletePremium", `uuids: ["${contribution.uuid}"]`, clientMutationLabel);
+  contribution.clientMutationId = mutation.clientMutationId;
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ['CONTRIBUTION_MUTATION_REQ', 'CONTRIBUTION_DELETE_RESP', 'CONTRIBUTION_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime,
+      contributionUuid: contribution.uuid,
+    }
+  )
+}

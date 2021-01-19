@@ -20,11 +20,11 @@ class ContributionPage extends Component {
         historyPush(this.props.modulesManager, this.props.history, "insuree.route.family")
     }
 
-    save = (family) => {
-        if (!family.uuid) {
+    save = (contribution) => {
+        if (!contribution.uuid) {
             this.props.createContribution(
                 this.props.modulesManager,
-                family,
+                contribution,
                 formatMessageWithValues(
                     this.props.intl,
                     "contribution",
@@ -34,7 +34,7 @@ class ContributionPage extends Component {
         } else {
             this.props.updateContribution(
                 this.props.modulesManager,
-                family,
+                contribution,
                 formatMessageWithValues(
                     this.props.intl,
                     "contribution",

@@ -12,7 +12,7 @@
     "contribution.category.null": "Any",
     "contribution.category.photoFee": "Photo Fee",
     "contribution.contributionSummaries": "{count} contributions Found",
-    "contribution.deletePremium.tooltip": "Delete premium",
+    "contribution.deletePremium.tooltip": "Delete contribution",
     "contribution.menu.contributions": "Contributions",
     "contribution.openNewTab": "Open in new tab",
     "contribution.openNewTabHead": " ",
@@ -29,5 +29,8 @@
     "contribution.receipt": "Receipt No.",
     "contribution.CreateContribution.mutationLabel": "Create contribution",
     "contribution.ContributionOverview.title": "Contribution Details",
-    "contribution.UpdateContribution.mutationLabel": "Update contribution"
+    "contribution.UpdateContribution.mutationLabel": "Update contribution",
+    "contribution.deleteContributionDialog.title": "Delete contribution",
+    "contribution.deleteContributionDialog.message": "Are you sure you want to delete this contribution?",
+    "contribution.deleteContributionDialog.yes.button": "Yes"
 }

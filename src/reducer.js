@@ -1,4 +1,12 @@
-import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import {
+    parseData,
+    pageInfo,
+    formatServerError,
+    formatGraphQLError,
+    dispatchMutationResp,
+    dispatchMutationErr,
+    dispatchMutationReq,
+} from '@openimis/fe-core';
 
 function reducer(
     state = {
@@ -117,6 +125,14 @@ function reducer(
                 contributionsPageInfo : { totalCount: 0 },
                 contribution: null,
             };
+        case 'CONTRIBUTION_MUTATION_REQ':
+            return dispatchMutationReq(state, action)
+        case 'CONTRIBUTION_MUTATION_ERR':
+                return dispatchMutationErr(state, action);
+        case 'CONTRIBUTION_UPDATE_RESP':
+            return dispatchMutationResp(state, "updatePremium", action);
+        case 'CONTRIBUTION_DELETE_RESP':
+            return dispatchMutationResp(state, "deletePremium", action);
         default:
             return state;
     }

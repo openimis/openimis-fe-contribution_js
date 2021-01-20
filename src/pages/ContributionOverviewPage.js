@@ -9,7 +9,7 @@ class ContributionOverviewPage extends Component {
     render() {
         const { history, modulesManager, contribution_uuid } = this.props;
         var actions = [{
-            doIt: e => historyPush(modulesManager, history, "insuree.route.family", [contribution_uuid]),
+            doIt: e => historyPush(modulesManager, history, "contribution.contribution", [contribution_uuid]),
             icon: <EditIcon />,
             onlyIfDirty: false
         }]

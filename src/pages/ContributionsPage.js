@@ -21,9 +21,9 @@ class ContributionsPage extends Component {
         historyPush(this.props.modulesManager, this.props.history, "contribution.contributionOverview", [c.uuid], newTab)
     }
 
-    onAdd = () => {
-        historyPush(this.props.modulesManager, this.props.history, "contribution.contribution");
-    }
+    // onAdd = () => {
+    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contribution");
+    // }
 
     render() {
         const { intl, classes, rights } = this.props;

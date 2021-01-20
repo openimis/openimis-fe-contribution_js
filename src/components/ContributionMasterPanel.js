@@ -23,34 +23,35 @@ const styles = theme => ({
 class ContributionMasterPanel extends FormPanel {
     render() {
         const {
-            intl,
             classes,
             edited,
             readOnly,
-            overview,
         } = this.props;
         return (
             <Fragment>
-                <Grid container className={classes.item}>
-                    <Grid item xs={12}>
-                        <PublishedComponent
-                            pubRef="location.DetailedLocation"
-                            withNull={true}
-                            readOnly={true}
-                            value={edited && edited.policy && edited.policy.family ? edited.policy.family.location : null}
-                            onChange={c => this.updateAttribute('policy', {
-                                ...edited.policy,
-                                family: {
-                                    ...edited.policy.family,
-                                    location: c,
-                                }
-                            })}
-                            filterLabels={false}
-                        />
+                {
+                edited && edited.policy && edited.policy.family && edited.policy.family.location && (
+                    <Grid container className={classes.item}>
+                        <Grid item xs={12}>
+                            <PublishedComponent
+                                pubRef="location.DetailedLocation"
+                                withNull={true}
+                                readOnly={true}
+                                value={edited.policy.family.location}
+                                onChange={c => this.updateAttribute('policy', {
+                                    ...edited.policy,
+                                    family: {
+                                        ...edited.policy.family,
+                                        location: c,
+                                    }
+                                })}
+                                filterLabels={false}
+                            />
+                        </Grid>
+                        <Divider />
                     </Grid>
-                </Grid>
-
-                <Divider />
+                )
+                }
                 <Grid container className={classes.item}>
                     <Grid item xs={3} className={classes.item}>
                         <PublishedComponent pubRef="core.DatePicker"
@@ -102,7 +103,7 @@ class ContributionMasterPanel extends FormPanel {
                             pubRef="contribution.PremiumCategoryPicker"
                             withNull={false}
                             readOnly={readOnly}
-                            value={edited.isPhotoFee ? 'photoFee' : 'contribution'}
+                            value={edited && edited.isPhotoFee ? 'photoFee' : 'contribution'}
                             onChange={c => {
                                 return this.updateAttribute('isPhotoFee', c === 'photoFee');
                             }}

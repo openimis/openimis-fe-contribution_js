@@ -106,6 +106,11 @@ class ContributionSearcher extends Component {
     confirmDelete = deleteContribution => {
         this.setState({ deleteContribution,})
     }
+    deletePremiumAction = (i) =>
+        !!i.validityTo || !!i.clientMutationId ? null :
+            <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
+                <IconButton onClick={() => this.confirmDelete(i)}><DeleteIcon /></IconButton>
+            </Tooltip>
 
     itemFormatters = () => {
         const formatters =  [
@@ -123,21 +128,15 @@ class ContributionSearcher extends Component {
             c => formatMessage(this.props.intl, "contribution", `contribution.category.${!!c.isPhotoFee ? "photoFee" : "contribution"}`),
 
             c => (
-                <>
-                    <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
-                        <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
-                    </Tooltip>
-                    {
-                        !!this.props.rights.includes(RIGHT_CONTRIBUTION_DELETE) &&
-                            (
-                                <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
-                                    <IconButton onClick={() => this.confirmDelete(c)}><DeleteIcon /></IconButton>
-                                </Tooltip>
-                            )
-                    }
-                </>
+                <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
+                    <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
+                </Tooltip>
             )
         ];
+
+        if (!!this.props.rights.includes(RIGHT_CONTRIBUTION_DELETE)) {
+            formatters.push(this.deletePremiumAction)
+        }
         return formatters;
     }
 

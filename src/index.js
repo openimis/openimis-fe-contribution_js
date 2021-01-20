@@ -2,6 +2,7 @@ import React from "react";
 import { MonetizationOn } from "@material-ui/icons";
 import { FormattedMessage } from "@openimis/fe-core";
 import ContributionsPage from "./pages/ContributionsPage";
+import ContributionPage from "./pages/ContributionPage";
 import ContributionOverviewPage from "./pages/ContributionOverviewPage";
 import PoliciesPremiumsOverview from "./components/PoliciesPremiumsOverview";
 import PremiumPaymentTypePicker from "./pickers/PremiumPaymentTypePicker";
@@ -12,6 +13,7 @@ import reducer from "./reducer";
 import { RIGHT_CONTRIBUTION } from "./constants";
 
 const ROUTE_CONTRIBUTION_CONTRIBUTIONS = "contribution/contributions";
+const ROUTE_CONTRIBUTION_CONTRIBUTION = "contribution/contribution";
 const ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW = "contribution/contributionOverview";
 
 const DEFAULT_CONFIG = {
@@ -22,10 +24,12 @@ const DEFAULT_CONFIG = {
     { key: "contribution.PremiumPaymentTypePicker", ref: PremiumPaymentTypePicker },
     { key: "contribution.PremiumCategoryPicker", ref: PremiumCategoryPicker },
     { key: "contribution.contributions", ref: ROUTE_CONTRIBUTION_CONTRIBUTIONS },
+    { key: "contribution.contribution", ref: ROUTE_CONTRIBUTION_CONTRIBUTION },
     { key: "contribution.contributionOverview", ref: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW },
   ],
   "core.Router": [
     { path: ROUTE_CONTRIBUTION_CONTRIBUTIONS, component: ContributionsPage },
+    { path: ROUTE_CONTRIBUTION_CONTRIBUTION + "/:policy_uuid", component: ContributionPage },
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW + "/:contribution_uuid", component: ContributionOverviewPage },
   ],
   "insuree.MainMenu": [

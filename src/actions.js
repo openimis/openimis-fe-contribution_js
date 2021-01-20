@@ -86,16 +86,25 @@ export function formatContributionGQL(mm, contribution) {
   return req;
 }
 
-export function fetchContribution(mm, contributionUuid) {
+export function fetchContribution(
+  mm,
+  contributionUuid,
+  clientMutationId
+) {
   let filters = []
   if (!!contributionUuid) {
     filters.push(`uuid: "${contributionUuid}"`)
+  } else if (!!clientMutationId){
+    filters.push(`clientMutationId: "${clientMutationId}"`)
   }
   const payload = formatPageQuery("premiums",
     filters,
     CONTRIBUTION_FULL_PROJECTION(mm)
   );
-  return graphql(payload, 'CONTRIBUTION_OVERVIEW');
+  return graphql(payload, 'CONTRIBUTION_OVERVIEW',
+  {
+    clientMutationId: !contributionUuid && clientMutationId,
+  });
 }
 
 export function newContribution() {

@@ -8,7 +8,7 @@ import {
     formatMessageWithValues, withModulesManager, withHistory, historyPush,
     Form, ProgressOrError, journalize, coreConfirm
 } from "@openimis/fe-core";
-import { RIGHT_CONTRIBUTION, RIGHT_CONTRIBUTION_EDIT } from "../constants";
+import { RIGHT_CONTRIBUTION } from "../constants";
 
 import { fetchContribution, newContribution, createContribution } from "../actions";
 import ContributionMasterPanel from "./ContributionMasterPanel";
@@ -20,19 +20,17 @@ const styles = theme => ({
 const CONTRIBUTION_OVERVIEW_MUTATIONS_KEY = "contribution.ContributionOverview.mutations"
 
 class ContributionForm extends Component {
+    _newContribution = () => ({
+        // jsonExt: {},
+        isPhotoFee: false
+    });
 
     state = {
         lockNew: false,
         reset: 0,
-        constribution: this._newContribution(),
+        contribution: this._newContribution(),
         newContribution: true,
         consirmedAction: null,
-    }
-
-    _newContribution() {
-        return {
-            jsonExt: {},
-        };
     }
 
     componentDidMount() {
@@ -49,6 +47,17 @@ class ContributionForm extends Component {
                     this.props.modulesManager,
                     this.props.contribution_uuid
                 )
+            )
+        }
+        if (this.props.policy_uuid) {
+            this.setState({
+                contribution: {
+                    ... this._newContribution(),
+                    policy: {
+                        uuid: this.props.policy_uuid
+                    },
+                },
+            }
             )
         }
     }
@@ -76,9 +85,17 @@ class ContributionForm extends Component {
         }
     }
 
+
+
     // _add = () => {
+    //     const { policy_uuid } = this.props;
     //     this.setState((state) => ({
-    //         family: this._newFamily(),
+    //         contribution: {
+    //             ... this._newContribution(),
+    //             policy: {
+    //                 uuid: policy_uuid
+    //             },
+    //         },
     //         newContribution: true,
     //         lockNew: false,
     //         reset: state.reset + 1,
@@ -91,22 +108,30 @@ class ContributionForm extends Component {
     // }
 
     reload = () => {
+        const { contribution } = this.state;
         this.props.fetchContribution(
             this.props.modulesManager,
             this.state.contribution_uuid,
-            !!this.state.contribution.headInsuree ? this.state.contribution.headInsuree.chfId : null
+            contribution.clientMutationId
         );
     }
 
     canSave = () => {
-        if (!this.state.contribution.payType) return false;
+        const { contribution } = this.state;
+        if (!contribution ||
+            (contribution && (
+                !contribution.payType ||
+                !contribution.amount ||
+                !contribution.policy ||
+                (contribution.policy && !contribution.policy.uuid)
+            ))) return false;
         return true;
     }
 
-    _save = (contribution_uuid) => {
+    _save = (contribution) => {
         this.setState(
-            { lockNew: !contribution_uuid.uuid }, // avoid duplicates
-            e => this.props.save(contribution_uuid))
+            { lockNew: !contribution.uuid }, // avoid duplicates
+            e => this.props.save(contribution))
     }
 
     onEditedChanged = contribution => {
@@ -136,7 +161,7 @@ class ContributionForm extends Component {
             overview = false,
             readOnly = false,
             add, save, back, mutation } = this.props;
-        const { contribution } = this.state;
+        const { contribution, newContribution, reset } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         const runningMutation = !!contribution && !!contribution.clientMutationId
         let contributedMutations = modulesManager.getContribs(CONTRIBUTION_OVERVIEW_MUTATIONS_KEY);
@@ -154,13 +179,13 @@ class ContributionForm extends Component {
                 {((!!fetchedContribution && !!contribution && contribution.uuid === contribution_uuid) || !contribution_uuid) && (
                     <Form
                         module="contribution"
-                        title="ContributionOverview.title"
+                        title={!!newContribution ? "ContributionOverview.newTitle" : "ContributionOverview.title"}
                         edited_id={contribution_uuid}
                         edited={contribution}
-                        reset={this.state.reset}
+                        reset={reset}
                         back={back}
-                        add={!!add && !this.state.newContribution ? this._add : null}
-                        readOnly={readOnly || runningMutation || !!contribution.validityTo}
+                        // add={!!add && !newContribution ? this._add : null}
+                        readOnly={readOnly || runningMutation || contribution && !!contribution.validityTo}
                         actions={actions}
                         overview={overview}
                         HeadPanel={ContributionMasterPanel}

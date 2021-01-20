@@ -106,11 +106,20 @@ function reducer(
             };
         case 'CONTRIBUTION_OVERVIEW_RESP':
             var contributions = parseData(action.payload.data.premiums);
+            const clientMutationId = state.mutation.clientMutationId;
+            let contribution = null;
+            if (!!contributions && contributions.length > 0) {
+                if (clientMutationId) {
+                    contribution = contributions.find(c => c.clientMutationId === clientMutationId)
+                } else {
+                    contribution = contributions[0];
+                }
+            }
             return {
                 ...state,
                 fetchingContribution: false,
                 fetchedContribution: true,
-                contribution: (!!contributions && contributions.length > 0) ? contributions[0] : null,
+                contribution,
                 errorContribution: formatGraphQLError(action.payload)
             };
         case 'CONTRIBUTION_OVERVIEW_ERR':
@@ -133,6 +142,8 @@ function reducer(
             return dispatchMutationResp(state, "updatePremium", action);
         case 'CONTRIBUTION_DELETE_RESP':
             return dispatchMutationResp(state, "deletePremium", action);
+        case 'CONTRIBUTION_CREATE_RESP':
+            return dispatchMutationResp(state, "createPremium", action);
         default:
             return state;
     }

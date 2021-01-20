@@ -17,7 +17,7 @@ const styles = theme => ({
 class ContributionPage extends Component {
 
     add = () => {
-        historyPush(this.props.modulesManager, this.props.history, "insuree.route.family")
+        historyPush(this.props.modulesManager, this.props.history, "contribution.contribution")
     }
 
     save = (contribution) => {
@@ -46,7 +46,7 @@ class ContributionPage extends Component {
     }
 
     render() {
-        const { classes, modulesManager, history, rights, contribution_uuid, overview } = this.props;
+        const { classes, modulesManager, history, rights, contribution_uuid,policy_uuid, overview } = this.props;
         if (!rights.includes(RIGHT_CONTRIBUTION_EDIT)) return null;
 
         return (
@@ -54,8 +54,9 @@ class ContributionPage extends Component {
                 <ContributionForm
                     overview={overview}
                     contribution_uuid={contribution_uuid}
+                    policy_uuid={policy_uuid}
                     back={e => historyPush(modulesManager, history, "contribution.contributions")}
-                    add={rights.includes(RIGHT_CONTRIBUTION_ADD) ? this.add : null}
+                    // add={rights.includes(RIGHT_CONTRIBUTION_ADD) ? this.add : null}
                     save={rights.includes(RIGHT_CONTRIBUTION_EDIT) ? this.save : null}
                 />
             </div>
@@ -66,6 +67,7 @@ class ContributionPage extends Component {
 const mapStateToProps = (state, props) => ({
     rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     contribution_uuid: props.match.params.contribution_uuid,
+    policy_uuid: props.match.params.policy_uuid,
 })
 
 const mapDispatchToProps = dispatch => {

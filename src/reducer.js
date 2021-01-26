@@ -106,14 +106,9 @@ function reducer(
             };
         case 'CONTRIBUTION_OVERVIEW_RESP':
             var contributions = parseData(action.payload.data.premiums);
-            const clientMutationId = state.mutation.clientMutationId;
             let contribution = null;
             if (!!contributions && contributions.length > 0) {
-                if (clientMutationId) {
-                    contribution = contributions.find(c => c.clientMutationId === clientMutationId)
-                } else {
-                    contribution = contributions[0];
-                }
+                contribution = contributions[0];
             }
             return {
                 ...state,

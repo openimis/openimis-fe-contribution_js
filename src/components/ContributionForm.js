@@ -65,7 +65,8 @@ class ContributionForm extends Component {
     componentDidUpdate(prevProps) {
         if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
             const { contribution } = this.props;
-            contribution.ext = !!contribution.jsonExt ? JSON.parse(contribution.jsonExt) : {};
+            contribution.ext = !!contribution && !!contribution.jsonExt ?
+                                JSON.parse(contribution.jsonExt) : {};
             this.setState(
             {
                 contribution,

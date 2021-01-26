@@ -121,8 +121,10 @@ class ContributionForm extends Component {
         const { contribution } = this.state;
         if (!contribution ||
             (contribution && (
+                !contribution.payDate ||
                 !contribution.payType ||
                 !contribution.amount ||
+                !contribution.receipt ||
                 !contribution.policy ||
                 (contribution.policy && !contribution.policy.uuid)
             ))) return false;

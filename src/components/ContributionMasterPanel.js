@@ -1,14 +1,17 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from 'react-intl';
 import {
     Grid,
     Divider,
 } from "@material-ui/core";
-import { People as PeopleIcon } from '@material-ui/icons';
 import {
-    historyPush, withHistory, withModulesManager, AmountInput,
-    TextInput, formatMessage, PublishedComponent, FormattedMessage, FormPanel
+    withHistory,
+    withModulesManager,
+    AmountInput,
+    TextInput,
+    PublishedComponent,
+    FormPanel
 } from "@openimis/fe-core";
 
 

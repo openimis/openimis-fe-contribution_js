@@ -13,18 +13,20 @@ import reducer from "./reducer";
 import { RIGHT_CONTRIBUTION } from "./constants";
 
 const ROUTE_CONTRIBUTION_CONTRIBUTIONS = "contribution/contributions";
-const ROUTE_CONTRIBUTION_CONTRIBUTION = "contribution/contribution";
-const ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW = "contribution/contributionOverview";
+const ROUTE_CONTRIBUTION_CONTRIBUTION = "contribution/new";
+const ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW = "contribution/overview";
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: "en", messages: messages_en }],
   "reducers": [{ key: 'contribution', reducer }],
 
   "refs": [
+
+    { key: "contribution.PremiumPicker.projection", ref: ["id", "uuid", "receipt"] },
     { key: "contribution.PremiumPaymentTypePicker", ref: PremiumPaymentTypePicker },
     { key: "contribution.PremiumCategoryPicker", ref: PremiumCategoryPicker },
     { key: "contribution.contributions", ref: ROUTE_CONTRIBUTION_CONTRIBUTIONS },
-    { key: "contribution.contribution", ref: ROUTE_CONTRIBUTION_CONTRIBUTION },
+    { key: "contribution.contributionNew", ref: ROUTE_CONTRIBUTION_CONTRIBUTION },
     { key: "contribution.contributionOverview", ref: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW },
   ],
   "core.Router": [

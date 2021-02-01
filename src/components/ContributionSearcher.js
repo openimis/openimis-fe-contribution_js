@@ -106,6 +106,7 @@ class ContributionSearcher extends Component {
     confirmDelete = deleteContribution => {
         this.setState({ deleteContribution,})
     }
+
     deletePremiumAction = (i) =>
         !!i.validityTo || !!i.clientMutationId ? null :
             <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>

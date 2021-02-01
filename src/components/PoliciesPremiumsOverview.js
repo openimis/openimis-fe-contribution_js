@@ -14,10 +14,11 @@ import {
     formatMessage, formatMessageWithValues,
     formatAmount, formatDateFromISO, withModulesManager, withTooltip,
     formatSorter, sort,
-    PublishedComponent, Table, PagedDataHandler
+    PublishedComponent, Table, PagedDataHandler, journalize, historyPush
 } from "@openimis/fe-core";
 
-import { fetchPoliciesPremiums, selectPremium } from "../actions";
+import { fetchPoliciesPremiums, selectPremium, deleteContribution } from "../actions";
+import DeleteContributionDialog from "./DeleteContributionDialog";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -31,6 +32,9 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
     constructor(props) {
         super(props);
+        this.state = {
+            deleteContribution: null,
+        }
         this.rowsPerPageOptions = props.modulesManager.getConf("fe-contribution", "familyPremiumsOverview.rowsPerPageOptions", [2, 5, 10, 20]);
         this.defaultPageSize = props.modulesManager.getConf("fe-contribution", "familyPremiumsOverview.defaultPageSize", 2);
     }
@@ -39,11 +43,17 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.setState({ orderBy: "-payDate" }, e => this.query())
     }
 
-    addNewPremium = () => alert("Will be implemented along Contribution module migration!")
-    deletePremium = () => alert("Will be implemented along Contribution module migration!")
+    addNewPremium = () =>  {
+        const {
+            policy,
+            modulesManager,
+            history,
+        } = this.props;
+        historyPush(modulesManager, history, "contribution.contributionNew", [policy.policyUuid]);
+    }
 
     onDoubleClick = (i, newTab = false) => {
-        alert("Will be implemented along Contribution module migration!")
+        historyPush(modulesManager, history, "contribution.contributionOverview", [i.uuid], newTab);
     }
 
     policiesChanged = (prevProps) =>
@@ -53,6 +63,10 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.policiesChanged(prevProps)) {
             this.query();
+        }
+        if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
+            this.setState({ reset: this.state.reset + 1 });
         }
     }
 
@@ -96,6 +110,11 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.sorter("category"),
     ];
 
+
+    confirmDelete = deleteContribution => {
+        this.setState({ deleteContribution,})
+    }
+
     formatters = [
         p => formatDateFromISO(this.props.modulesManager, this.props.intl, p.payDate),
         p => <PublishedComponent
@@ -109,8 +128,20 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         />,
         p => p.receipt,
         p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`),
-        p => withTooltip(<IconButton onClick={this.deletePremium}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
+        p => withTooltip(<IconButton onClick={this.confirmDelete}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
     ];
+
+    deleteContribution = () => {
+        let contribution = this.state.deleteContribution;
+        this.setState(
+            { deleteContribution: null },
+            (e) => {
+                this.props.deleteContribution(
+                    this.props.modulesManager,
+                    contribution,
+                    formatMessage(this.props.intl, "contribution", "deleteContributionDialog.title"))
+            })
+    }
 
     header = () => {
         const { modulesManager, intl, pageInfo, policy } = this.props;
@@ -131,10 +162,20 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     render() {
-        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo, reset, readOnly } = this.props;
+        const {
+            intl,
+            family,
+            classes,
+            policiesPremiums,
+            errorPoliciesPremiums,
+            pageInfo,
+            reset,
+            readOnly,
+            policies,
+            policy,
+        } = this.props;
         if (!family.uuid) return null;
-
-        let actions = !!readOnly ? [] : [
+        let actions = !!readOnly || !policy ? [] : [
             {
                 button: <IconButton onClick={this.addNewPremium}><AddIcon /></IconButton>,
                 tooltip: formatMessage(intl, "contribution", "addNewPremium.tooltip")
@@ -142,6 +183,11 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         ];
 
         return (
+            <>
+            <DeleteContributionDialog
+                    contribution={this.state.deleteContribution}
+                    onConfirm={this.deleteContribution}
+                    onCancel={e => this.setState({ deleteContribution: null })} />
             <Paper className={classes.paper}>
                 <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
                     <Grid item xs={8}>
@@ -182,6 +228,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                     onChangeRowsPerPage={this.onChangeRowsPerPage}
                 />
             </Paper>
+            </>
         )
     }
 }
@@ -195,10 +242,17 @@ const mapStateToProps = state => ({
     policiesPremiums: state.contribution.policiesPremiums,
     pageInfo: state.contribution.policiesPremiumsPageInfo,
     errorPoliciesPremiums: state.contribution.errorPoliciesPremiums,
+    errorContributions: state.contribution.errorContributions,
+    submittingMutation: state.contribution.submittingMutation,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchPoliciesPremiums, selectPremium }, dispatch);
+    return bindActionCreators({
+        fetch: fetchPoliciesPremiums,
+        selectPremium,
+        deleteContribution,
+        journalize,
+    }, dispatch);
 };
 
 export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PoliciesPremiumsOverview)))));

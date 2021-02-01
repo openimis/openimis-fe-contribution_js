@@ -22,7 +22,7 @@ class ContributionsPage extends Component {
     }
 
     // onAdd = () => {
-    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contribution");
+    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contributionNew");
     // }
 
     render() {

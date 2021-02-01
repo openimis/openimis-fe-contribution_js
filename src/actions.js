@@ -9,18 +9,6 @@ import {
 import _ from "lodash";
 import _uuid from "lodash-uuid";
 
-
-const POLICY_SUMMARY_PROJECTION = mm => [
-  "uuid",
-  `product{${mm.getRef("product.ProductPicker.projection")}}`,
-  `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
-  `family{${mm.getRef("insuree.FamilyPicker.projection").concat([`location{${mm.getRef("location.Location.FlatProjection")}}`])}}`,
-  "enrollDate", "effectiveDate", "startDate", "expiryDate",
-  "stage", "status",
-  "value",
-  "validityFrom", "validityTo"
-]
-
 const CONTRIBUTION_FULL_PROJECTION = mm => [
   "id",
   "uuid",
@@ -31,7 +19,7 @@ const CONTRIBUTION_FULL_PROJECTION = mm => [
   "isPhotoFee",
   "clientMutationId",
   `payer${mm.getProjection("payer.PayerPicker.projection")}`,
-  `policy{${POLICY_SUMMARY_PROJECTION(mm).join(",")}}`,
+  `policy${mm.getProjection("policy.PolicyPicker.projection")}`,
 ];
 
 export function fetchPoliciesPremiums(mm, filters) {

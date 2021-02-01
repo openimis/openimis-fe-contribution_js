@@ -21,7 +21,6 @@ const CONTRIBUTION_OVERVIEW_MUTATIONS_KEY = "contribution.ContributionOverview.m
 
 class ContributionForm extends Component {
     _newContribution = () => ({
-        // jsonExt: {},
         isPhotoFee: false
     });
 
@@ -65,8 +64,6 @@ class ContributionForm extends Component {
     componentDidUpdate(prevProps) {
         if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
             const { contribution } = this.props;
-            contribution.ext = !!contribution && !!contribution.jsonExt ?
-                                JSON.parse(contribution.jsonExt) : {};
             this.setState(
             {
                 contribution,

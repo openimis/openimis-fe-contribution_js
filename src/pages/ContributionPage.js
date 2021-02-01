@@ -16,9 +16,9 @@ const styles = theme => ({
 
 class ContributionPage extends Component {
 
-    add = () => {
-        historyPush(this.props.modulesManager, this.props.history, "contribution.contribution")
-    }
+    // add = () => {
+    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contributionNew")
+    // }
 
     save = (contribution) => {
         if (!contribution.uuid) {
@@ -55,7 +55,10 @@ class ContributionPage extends Component {
                     overview={overview}
                     contribution_uuid={contribution_uuid}
                     policy_uuid={policy_uuid}
-                    back={e => historyPush(modulesManager, history, "contribution.contributions")}
+                    back={e => {
+                        // historyPush(modulesManager, history, "contribution.contributions")
+                        window.history.back();
+                    }}
                     // add={rights.includes(RIGHT_CONTRIBUTION_ADD) ? this.add : null}
                     save={rights.includes(RIGHT_CONTRIBUTION_EDIT) ? this.save : null}
                 />

@@ -3,7 +3,6 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from 'react-intl';
 import {
     Grid,
-    Divider,
 } from "@material-ui/core";
 import {
     withHistory,
@@ -32,34 +31,12 @@ class ContributionMasterPanel extends FormPanel {
         } = this.props;
         return (
             <Fragment>
-                {
-                edited && edited.policy && edited.policy.family && edited.policy.family.location && (
-                    <Grid container className={classes.item}>
-                        <Grid item xs={12}>
-                            <PublishedComponent
-                                pubRef="location.DetailedLocation"
-                                withNull={true}
-                                readOnly={true}
-                                value={edited.policy.family.location}
-                                onChange={c => this.updateAttribute('policy', {
-                                    ...edited.policy,
-                                    family: {
-                                        ...edited.policy.family,
-                                        location: c,
-                                    }
-                                })}
-                                filterLabels={false}
-                            />
-                        </Grid>
-                        <Divider />
-                    </Grid>
-                )
-                }
                 <Grid container className={classes.item}>
                     <Grid item xs={3} className={classes.item}>
                         <PublishedComponent pubRef="core.DatePicker"
                             value={!edited ? "" : edited.payDate}
                             module="contribution"
+                            required
                             label="contribution.payDate"
                             readOnly={readOnly}
                             onChange={c => this.updateAttribute('payDate', c)}
@@ -78,6 +55,7 @@ class ContributionMasterPanel extends FormPanel {
                         <AmountInput
                             module="contribution"
                             label="contribution.amount"
+                            required
                             readOnly={readOnly}
                             value={!edited ? "" : edited.amount}
                             onChange={c => this.updateAttribute('amount', c)}
@@ -87,6 +65,7 @@ class ContributionMasterPanel extends FormPanel {
                         <PublishedComponent
                             pubRef="contribution.PremiumPaymentTypePicker"
                             withNull={true}
+                            required
                             readOnly={readOnly}
                             value={!edited ? "" : edited.payType}
                             onChange={c => this.updateAttribute('payType', c)}
@@ -96,6 +75,7 @@ class ContributionMasterPanel extends FormPanel {
                         <TextInput
                             module="contribution"
                             label="contribution.receipt"
+                            required
                             readOnly={readOnly}
                             value={!edited ? "" : edited.receipt}
                             onChange={c => this.updateAttribute('receipt', c)}

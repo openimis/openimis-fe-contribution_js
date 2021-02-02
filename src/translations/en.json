@@ -1,6 +1,7 @@
 {
-    "contribution.addNewContributionTooltip": "Add new contribution",
-    "contribution.addNewPremium.tooltip": "Add new premium",
+    "contribution.addNewPremium.tooltip": "Add new contribution",
+    "contribution.reload.tooltip": "Reload",
+    "contribution.addNewPremium.tooltip.selectPolicy": "Please select a policy to add a contribution",
     "contribution.amount": "Amount",
     "contribution.amount_Gte": "Amount above",
     "contribution.amount_Lte": "Amount under",

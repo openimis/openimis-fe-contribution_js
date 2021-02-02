@@ -40,7 +40,7 @@ class ContributionsPage extends Component {
                                 <AddIcon />
                             </Fab>
                         </div>,
-                        formatMessage(intl, "contribution", "addNewContributionTooltip")
+                        formatMessage(intl, "contribution", "addNewPremium.tooltip")
                     )
                 } */}
             </div>

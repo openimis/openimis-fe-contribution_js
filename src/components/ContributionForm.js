@@ -10,8 +10,9 @@ import {
 } from "@openimis/fe-core";
 import { RIGHT_CONTRIBUTION } from "../constants";
 
-import { fetchContribution, newContribution, createContribution } from "../actions";
+import { fetchContribution, newContribution, createContribution, fetchPolicySummary } from "../actions";
 import ContributionMasterPanel from "./ContributionMasterPanel";
+import SaveContributionDialog from "./SaveContributionDialog";
 
 const styles = theme => ({
     lockedPage: theme.page.locked
@@ -27,9 +28,10 @@ class ContributionForm extends Component {
     state = {
         lockNew: false,
         reset: 0,
+        update: false,
         contribution: this._newContribution(),
         newContribution: true,
-        consirmedAction: null,
+        saveContribution: false,
     }
 
     componentDidMount() {
@@ -39,25 +41,36 @@ class ContributionForm extends Component {
             "ContributionOverview.title",
             { label: "" }
         );
-        if (this.props.contribution_uuid) {
+        const {
+            contribution_uuid,
+            policy_uuid,
+            modulesManager,
+            fetchContribution,
+            fetchPolicySummary,
+        } = this.props;
+
+        if (contribution_uuid) {
             this.setState(
-                (state, props) => ({ contribution_uuid: props.contribution_uuid }),
-                e => this.props.fetchContribution(
-                    this.props.modulesManager,
-                    this.props.contribution_uuid
+                (state, props) => (
+                    { contribution_uuid: props.contribution_uuid }
+                ),
+                e => fetchContribution(
+                    modulesManager,
+                    contribution_uuid
                 )
             )
         }
-        if (this.props.policy_uuid) {
+        if (policy_uuid) {
+            fetchPolicySummary(modulesManager, policy_uuid);
             this.setState({
                 contribution: {
                     ... this._newContribution(),
                     policy: {
-                        uuid: this.props.policy_uuid
+                        uuid: policy_uuid,
+                        value: undefined,
                     },
                 },
-            }
-            )
+            });
         }
     }
 
@@ -80,6 +93,15 @@ class ContributionForm extends Component {
             }));
         } else if (prevProps.confirmed !== this.props.confirmed && !!this.props.confirmed && !!this.state.confirmedAction) {
             this.state.confirmedAction();
+        }
+
+        if (!prevProps.policySummary && !!this.props.policySummary) {
+            this.setState({
+                contribution: {
+                    ... this.state.contribution,
+                    policy: this.props.policySummary,
+                },
+            });
         }
     }
 
@@ -128,9 +150,22 @@ class ContributionForm extends Component {
         return true;
     }
 
-    _save = (contribution) => {
+    confirmSave = () => {
         this.setState(
-            { lockNew: !contribution.uuid }, // avoid duplicates
+            { saveContribution: true },
+        );
+    }
+
+    _save = (action) => {
+        const { contribution } = this.state;
+        if (!!action) {
+            contribution.action = action;
+        }
+        this.setState(
+            {
+                lockNew: !contribution.uuid,
+                saveContribution: false,
+            }, // avoid duplicates
             e => this.props.save(contribution))
     }
 
@@ -148,6 +183,16 @@ class ContributionForm extends Component {
         )
     }
 
+    _cancelSave() {
+        const { update } = this.state;
+        this.setState(
+            {
+                saveContribution: false,
+                update: !update,
+            },
+        );
+    }
+
     render() {
         const {
             modulesManager,
@@ -161,7 +206,7 @@ class ContributionForm extends Component {
             overview = false,
             readOnly = false,
             add, save, back, mutation } = this.props;
-        const { contribution, newContribution, reset } = this.state;
+        const { contribution, saveContribution, newContribution, reset, update } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         const runningMutation = !!contribution && !!contribution.clientMutationId
         let contributedMutations = modulesManager.getContribs(CONTRIBUTION_OVERVIEW_MUTATIONS_KEY);
@@ -175,6 +220,10 @@ class ContributionForm extends Component {
         }];
         return (
             <div className={!!runningMutation ? classes.lockedPage : null}>
+                <SaveContributionDialog
+                    contribution={saveContribution && contribution}
+                    onConfirm={this._save}
+                    onCancel={() => this._cancelSave()} />
                 <ProgressOrError progress={fetchingContribution} error={errorContribution} />
                 {((!!fetchedContribution && !!contribution && contribution.uuid === contribution_uuid) || !contribution_uuid) && (
                     <Form
@@ -192,7 +241,8 @@ class ContributionForm extends Component {
                         contribution={contribution}
                         onEditedChanged={this.onEditedChanged}
                         canSave={this.canSave}
-                        save={!!save ? this._save : null}
+                        save={!!save ? this.confirmSave : null}
+                        update={update}
                         onActionToConfirm={this.onActionToConfirm}
                     />
                 )}
@@ -207,6 +257,7 @@ const mapStateToProps = (state, props) => ({
     errorContribution: state.contribution.errorContribution,
     fetchedContribution: state.contribution.fetchedContribution,
     submittingMutation: state.contribution.submittingMutation,
+    policySummary: state.contribution.policySummary,
     mutation: state.contribution.mutation,
     contribution: state.contribution.contribution,
     confirmed: state.core.confirmed,
@@ -214,7 +265,14 @@ const mapStateToProps = (state, props) => ({
 })
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchContribution, newContribution, createContribution, journalize, coreConfirm }, dispatch);
+    return bindActionCreators({
+        fetchContribution,
+        fetchPolicySummary,
+        newContribution,
+        createContribution,
+        journalize,
+        coreConfirm,
+    }, dispatch);
 };
 
 export default withHistory(withModulesManager(connect(mapStateToProps, mapDispatchToProps)(

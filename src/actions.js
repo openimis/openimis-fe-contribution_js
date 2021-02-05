@@ -66,12 +66,28 @@ export function formatContributionGQL(mm, contribution) {
     ${!!contribution.payDate ? `payDate: "${contribution.payDate}"` : ""}
     ${!!contribution.payType ? `payType: "${contribution.payType}"` : ""}
     ${`isPhotoFee: ${contribution.isPhotoFee}`}
+    ${!!contribution.action ? `action: "${contribution.action}"` : ""}
     ${!!contribution.amount ? `amount: "${contribution.amount}"` : ""}
     ${!!contribution.payer ? `payerUuid: "${contribution.payer.uuid}"` : ""}
     ${!!contribution.jsonExt ? `jsonExt: ${formatJsonField(contribution.jsonExt)}` : ""}
     ${!!contribution.policy ? `policyUuid: "${formatGQLString(contribution.policy.uuid)}"` : ""}
   `
   return req;
+}
+export function fetchPolicySummary(
+  mm,
+  policyUuid,
+) {
+  let filters = []
+  if (!!policyUuid) {
+    filters.push(`uuid: "${policyUuid}"`)
+  }
+  const projection = mm.getProjection("policy.PolicyPicker.projection").replace("{", "").replace("}", "").split(',');
+  const payload = formatPageQuery("policies",
+    filters,
+    ["id", "uuid", "startDate", "product{name}", "expiryDate", "value"],
+  );
+  return graphql(payload, 'CONTRIBUTION_POLICY_SUMMARY');
 }
 
 export function fetchContribution(

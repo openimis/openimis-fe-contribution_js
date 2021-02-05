@@ -26,6 +26,8 @@ function reducer(
         errorContribution: null,
         submittingMutation: false,
         mutation: {},
+        policySummary: null,
+        errorPolicySummary: null,
     },
     action,
 ) {
@@ -95,6 +97,28 @@ function reducer(
                 contributions: parseData(action.payload.data.premiums),
                 contributionsPageInfo: pageInfo(action.payload.data.premiums),
                 errorContributions: formatGraphQLError(action.payload)
+            };
+        case 'CONTRIBUTION_POLICY_SUMMARY_REQ':
+            return {
+                ...state,
+                policySummary: null,
+                errorPolicySummary: null,
+            };
+        case 'CONTRIBUTION_POLICY_SUMMARY_RESP':
+            var policies = parseData(action.payload.data.policies);
+            let policySummary = null;
+            if (!!policies && policies.length > 0) {
+                policySummary = policies[0];
+            }
+            return {
+                ...state,
+                policySummary,
+                errorPolicySummary: formatGraphQLError(action.payload)
+            };
+        case 'CONTRIBUTION_POLICY_SUMMARY_ERR':
+            return {
+                ...state,
+                errorPolicySummary: formatServerError(action.payload)
             };
         case 'CONTRIBUTION_OVERVIEW_REQ':
             return {

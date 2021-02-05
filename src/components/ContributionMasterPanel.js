@@ -31,6 +31,43 @@ class ContributionMasterPanel extends FormPanel {
         } = this.props;
         return (
             <Fragment>
+                {!!edited && !!edited.policy && !!edited.policy.value  && (
+                    <Grid container className={classes.item}>
+                        <Grid item xs={3} className={classes.item}>
+                            <TextInput
+                                module="contribution"
+                                label="contribution.policy.name"
+                                readOnly={true}
+                                value={(edited.policy.product && edited.policy.product.name)|| ""}
+                            />
+                        </Grid>
+                        <Grid item xs={3} className={classes.item}>
+                            <AmountInput
+                                module="contribution"
+                                label="contribution.policy.value"
+                                required
+                                readOnly={true}
+                                value={edited.policy.value || ""}
+                            />
+                        </Grid>
+                        <Grid item xs={3} className={classes.item}>
+                            <PublishedComponent pubRef="core.DatePicker"
+                                value={edited.policy.startDate || ""}
+                                module="contribution"
+                                label="contribution.policy.startDate"
+                                readOnly={true}
+                            />
+                        </Grid>
+                        <Grid item xs={3} className={classes.item}>
+                            <PublishedComponent pubRef="core.DatePicker"
+                                value={edited.policy.expiryDate || ""}
+                                module="contribution"
+                                label="contribution.policy.expiryDate"
+                                readOnly={true}
+                            />
+                        </Grid>
+                    </Grid>
+                )}
                 <Grid container className={classes.item}>
                     <Grid item xs={3} className={classes.item}>
                         <PublishedComponent pubRef="core.DatePicker"

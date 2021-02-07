@@ -35,5 +35,17 @@
     "contribution.PremiumPaymentTypePicker.label": "Payment Type",
     "contribution.receipt": "Receipt No.",
     "contribution.showHistory": "Show historical values",
-    "contribution.UpdateContribution.mutationLabel": "Update contribution"
+    "contribution.UpdateContribution.mutationLabel": "Update contribution",
+    "contribution.saveContributionDialog.title": "Contribution confirmation",
+    "contribution.saveContributionDialog.messageLower": "The contribution is lower than the policy value",
+    "contribution.saveContributionDialog.messageLowerConfirm": "Should the policy come into force?",
+    "contribution.saveContributionDialog.messageEqual": "The contribution matches the value of the policy",
+    "contribution.saveContributionDialog.messageHigher": "The contribution is higher than the value of the policy",
+    "contribution.saveContributionDialog.ok.button": "OK",
+    "contribution.saveContributionDialog.yes.button": "Yes",
+    "contribution.saveContributionDialog.no.button": "No",
+    "contribution.policy.name": "Policy name",
+    "contribution.policy.value": "Policy value",
+    "contribution.policy.startDate": "Start date",
+    "contribution.policy.expiryDate": "Expiry date"
 }

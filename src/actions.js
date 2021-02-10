@@ -43,6 +43,7 @@ export function fetchContributionsSummaries(mm, filters) {
       "receipt",
       "isPhotoFee",
       "clientMutationId",
+      "validityTo",
       `payer${mm.getProjection("payer.PayerPicker.projection")}`,
     ];
     const payload = formatPageQueryWithCount("premiums",

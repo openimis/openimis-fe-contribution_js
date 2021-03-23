@@ -44,6 +44,13 @@ function reducer(
             }
         case 'POLICY_INSUREE_POLICIES_REQ':
         case 'POLICY_FAMILY_POLICIES_REQ':
+            return {
+                ...state,
+                policiesPremiums: null,
+                policiesPremiumsPageInfo: { totalCount: 0 },
+                errorPoliciesPremiums: null,
+                premium: null,
+            };
         case 'CONTRIBUTION_POLICES_PREMIUMS_REQ':
             return {
                 ...state,

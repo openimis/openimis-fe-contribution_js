@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import {
-    formatMessageWithValues, withModulesManager, withHistory, historyPush,
+    formatMessageWithValues, withModulesManager, withHistory,
 } from "@openimis/fe-core";
 import ContributionForm from "../components/ContributionForm";
 import { createContribution, updateContribution } from "../actions";
-import { RIGHT_CONTRIBUTION_ADD, RIGHT_CONTRIBUTION_EDIT } from "../constants";
+import { RIGHT_CONTRIBUTION_EDIT } from "../constants";
 
 const styles = theme => ({
     page: theme.page,
@@ -16,9 +16,6 @@ const styles = theme => ({
 
 class ContributionPage extends Component {
 
-    // add = () => {
-    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contributionNew")
-    // }
 
     save = (contribution) => {
         if (!contribution.uuid) {
@@ -46,7 +43,7 @@ class ContributionPage extends Component {
     }
 
     render() {
-        const { classes, modulesManager, history, rights, contribution_uuid,policy_uuid, overview } = this.props;
+        const { classes, rights, contribution_uuid,policy_uuid, overview } = this.props;
         if (!rights.includes(RIGHT_CONTRIBUTION_EDIT)) return null;
 
         return (
@@ -56,10 +53,8 @@ class ContributionPage extends Component {
                     contribution_uuid={contribution_uuid}
                     policy_uuid={policy_uuid}
                     back={e => {
-                        // historyPush(modulesManager, history, "contribution.contributions")
                         window.history.back();
                     }}
-                    // add={rights.includes(RIGHT_CONTRIBUTION_ADD) ? this.add : null}
                     save={rights.includes(RIGHT_CONTRIBUTION_EDIT) ? this.save : null}
                 />
             </div>

@@ -24,8 +24,6 @@ const styles = theme => ({
     paperDivider: theme.paper.divider,
 });
 
-const INSUREE_FILTER_CONTRIBUTION_KEY = "contribution.Filter";
-
 class ContributionFilter extends Component {
     state = {
         showHistory: false,

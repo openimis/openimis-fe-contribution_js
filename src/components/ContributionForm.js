@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { injectIntl } from 'react-intl';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
 import {
-    formatMessageWithValues, withModulesManager, withHistory, historyPush,
+    formatMessageWithValues, withModulesManager, withHistory,
     Form, ProgressOrError, journalize, coreConfirm
 } from "@openimis/fe-core";
 import { RIGHT_CONTRIBUTION } from "../constants";
@@ -26,7 +26,6 @@ class ContributionForm extends Component {
     });
 
     state = {
-        lockNew: false,
         reset: 0,
         update: false,
         contribution: this._newContribution(),
@@ -81,11 +80,10 @@ class ContributionForm extends Component {
             {
                 contribution,
                 contribution_uuid: contribution.uuid,
-                lockNew: false,
                 newContribution: false
             });
         } else if (prevProps.contribution_uuid && !this.props.contribution_uuid) {
-            this.setState({ contribution: this._newContribution(), newContribution: true, lockNew: false, contribution_uuid: null });
+            this.setState({ contribution: this._newContribution(), newContribution: true, contribution_uuid: null });
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
             this.setState((state, props) => ({
@@ -96,36 +94,15 @@ class ContributionForm extends Component {
         }
 
         if (!prevProps.policySummary && !!this.props.policySummary) {
-            this.setState({
+            this.setState(prevState => ({
                 contribution: {
-                    ... this.state.contribution,
+                    ... prevState.contribution,
                     policy: this.props.policySummary,
                 },
-            });
+            }));
         }
     }
 
-
-
-    // _add = () => {
-    //     const { policy_uuid } = this.props;
-    //     this.setState((state) => ({
-    //         contribution: {
-    //             ... this._newContribution(),
-    //             policy: {
-    //                 uuid: policy_uuid
-    //             },
-    //         },
-    //         newContribution: true,
-    //         lockNew: false,
-    //         reset: state.reset + 1,
-    //     }),
-    //         e => {
-    //             this.props.add();
-    //             this.forceUpdate();
-    //         }
-    //     )
-    // }
 
     reload = () => {
         const { contribution } = this.state;
@@ -157,16 +134,19 @@ class ContributionForm extends Component {
     }
 
     _save = (action) => {
-        const { contribution } = this.state;
-        if (!!action) {
-            contribution.action = action;
-        }
-        this.setState(
-            {
-                lockNew: !contribution.uuid,
-                saveContribution: false,
-            }, // avoid duplicates
-            e => this.props.save(contribution))
+        this.setState(prevState => {
+            const { contribution } = prevState;
+            if (!!action) {
+                contribution.action = action;
+            }
+            this.props.save(contribution);
+            return (
+                {
+                    saveContribution: false,
+                }
+            );
+            },
+        );
     }
 
     onEditedChanged = contribution => {
@@ -205,10 +185,12 @@ class ContributionForm extends Component {
             errorContribution,
             overview = false,
             readOnly = false,
-            add, save, back, mutation } = this.props;
+            save,
+            back,
+         } = this.props;
         const { contribution, saveContribution, newContribution, reset, update } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
-        const runningMutation = !!contribution && !!contribution.clientMutationId
+        let runningMutation = !!contribution && !!contribution.clientMutationId
         let contributedMutations = modulesManager.getContribs(CONTRIBUTION_OVERVIEW_MUTATIONS_KEY);
         for (let i = 0; i < contributedMutations.length && !runningMutation; i++) {
             runningMutation = contributedMutations[i](state)

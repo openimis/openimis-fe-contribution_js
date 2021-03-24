@@ -2,12 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Fab } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import { historyPush, withModulesManager, withHistory, withTooltip, formatMessage } from "@openimis/fe-core"
+import { historyPush, withModulesManager, withHistory } from "@openimis/fe-core"
 import ContributionSearcher from "../components/ContributionSearcher";
 
-import { RIGHT_CONTRIBUTION_ADD } from "../constants";
 
 const styles = theme => ({
     page: theme.page,
@@ -21,28 +18,14 @@ class ContributionsPage extends Component {
         historyPush(this.props.modulesManager, this.props.history, "contribution.contributionOverview", [c.uuid], newTab)
     }
 
-    // onAdd = () => {
-    //     historyPush(this.props.modulesManager, this.props.history, "contribution.contributionNew");
-    // }
-
     render() {
-        const { intl, classes, rights } = this.props;
+        const { classes } = this.props;
         return (
             <div className={classes.page}>
                 <ContributionSearcher
                     cacheFiltersKey="contributionsPageFiltersCache"
                     onDoubleClick={this.onDoubleClick}
                 />
-                {/* {rights.includes(RIGHT_CONTRIBUTION_ADD) &&
-                    withTooltip(
-                        <div className={classes.fab}>
-                            <Fab color="primary" onClick={this.onAdd}>
-                                <AddIcon />
-                            </Fab>
-                        </div>,
-                        formatMessage(intl, "contribution", "addNewPremium.tooltip")
-                    )
-                } */}
             </div>
         )
     }

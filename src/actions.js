@@ -83,7 +83,6 @@ export function fetchPolicySummary(
   if (!!policyUuid) {
     filters.push(`uuid: "${policyUuid}"`)
   }
-  const projection = mm.getProjection("policy.PolicyPicker.projection").replace("{", "").replace("}", "").split(',');
   const payload = formatPageQuery("policies",
     filters,
     ["id", "uuid", "startDate", "product{name}", "expiryDate", "value"],

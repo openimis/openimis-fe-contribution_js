@@ -1,10 +1,11 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
+import ReplayIcon from "@material-ui/icons/Replay"
 import _ from "lodash";
-import { Paper, IconButton, Grid, Divider, Typography } from "@material-ui/core";
+import { Paper, IconButton, Grid, Divider, Typography, Tooltip} from "@material-ui/core";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -14,10 +15,16 @@ import {
     formatMessage, formatMessageWithValues,
     formatAmount, formatDateFromISO, withModulesManager, withTooltip,
     formatSorter, sort,
-    PublishedComponent, Table, PagedDataHandler
+    PublishedComponent, Table, PagedDataHandler, journalize, historyPush
 } from "@openimis/fe-core";
 
-import { fetchPoliciesPremiums, selectPremium } from "../actions";
+import { fetchPoliciesPremiums, selectPremium, deleteContribution } from "../actions";
+import DeleteContributionDialog from "./DeleteContributionDialog";
+
+import {
+    RIGHT_CONTRIBUTION_DELETE,
+    RIGHT_CONTRIBUTION_ADD,
+} from "../constants";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -25,6 +32,9 @@ const styles = theme => ({
     paperHeaderAction: theme.paper.action,
     tableTitle: theme.table.title,
     fab: theme.fab,
+    disabled:{
+        opacity: 0.4,
+    }
 });
 
 class PoliciesPremiumsOverview extends PagedDataHandler {
@@ -36,23 +46,39 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     componentDidMount() {
-        this.setState({ orderBy: "-payDate" }, e => this.query())
+        this.setState({
+            orderBy: "-payDate",
+            deleteContribution: null,
+        }, e => this.query())
     }
 
-    addNewPremium = () => alert("Will be implemented along Contribution module migration!")
-    deletePremium = () => alert("Will be implemented along Contribution module migration!")
+    addNewPremium = () =>  {
+        const {
+            policy,
+            modulesManager,
+            history,
+        } = this.props;
+        historyPush(modulesManager, history, "contribution.contributionNew", [policy.policyUuid]);
+    }
 
     onDoubleClick = (i, newTab = false) => {
-        alert("Will be implemented along Contribution module migration!")
+        const {
+            modulesManager,
+            history,
+        } = this.props;
+        historyPush(modulesManager, history, "contribution.contributionOverview", [i.uuid], newTab);
     }
 
     policiesChanged = (prevProps) =>
         (!_.isEqual(prevProps.policies, this.props.policies) && !!this.props.policies && !!this.props.policies.length) ||
         (!_.isEqual(prevProps.policy, this.props.policy))
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps) {
         if (this.policiesChanged(prevProps)) {
             this.query();
+        }
+        if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
         }
     }
 
@@ -73,12 +99,12 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     }
 
     headers = [
-        "contribution.premium.payDate",
-        "contribution.premium.payer",
-        "contribution.premium.amount",
-        "contribution.premium.payType",
-        "contribution.premium.receipt",
-        "contribution.premium.category",
+        "contribution.payDate",
+        "contribution.payer",
+        "contribution.amount",
+        "contribution.payType",
+        "contribution.receipt",
+        "contribution.category",
         "",
     ];
 
@@ -96,21 +122,51 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.sorter("category"),
     ];
 
-    formatters = [
-        p => formatDateFromISO(this.props.modulesManager, this.props.intl, p.payDate),
-        p => <PublishedComponent
-            readOnly={true}
-            pubRef="payer.PayerPicker" withLabel={false} value={p.payer}
-        />,
-        p => formatAmount(this.props.intl, p.amount),
-        p => <PublishedComponent
-            readOnly={true}
-            pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={p.payType}
-        />,
-        p => p.receipt,
-        p => formatMessage(this.props.intl, "contribution", `premium.category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`),
-        p => withTooltip(<IconButton onClick={this.deletePremium}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "contribution", "deletePremium.tooltip"))
-    ];
+
+    confirmDelete = deleteContribution => {
+        this.setState({ deleteContribution,})
+    }
+
+    deletePremiumAction = (i) =>
+        !!i.validityTo || !!i.clientMutationId ? null :
+            <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
+                <IconButton onClick={() => this.confirmDelete(i)}><DeleteIcon /></IconButton>
+            </Tooltip>
+
+    itemFormatters = () => {
+        const formatters = [
+            p => formatDateFromISO(this.props.modulesManager, this.props.intl, p.payDate),
+            p => <PublishedComponent
+                readOnly={true}
+                pubRef="payer.PayerPicker" withLabel={false} value={p.payer}
+            />,
+            p => formatAmount(this.props.intl, p.amount),
+            p => <PublishedComponent
+                readOnly={true}
+                pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={p.payType}
+            />,
+            p => p.receipt,
+            p => formatMessage(this.props.intl, "contribution", `category.${!!p.isPhotoFee ? "photoFee" : "contribution"}`),
+        ];
+
+        if (!!this.props.rights.includes(RIGHT_CONTRIBUTION_DELETE)) {
+            formatters.push(this.deletePremiumAction)
+        }
+        return formatters;
+    }
+
+    deleteContribution = () => {
+        let contribution = this.state.deleteContribution;
+        this.props.selectPremium(null);
+        this.setState(
+            { deleteContribution: null },
+            (e) => {
+                this.props.deleteContribution(
+                    this.props.modulesManager,
+                    contribution,
+                    formatMessage(this.props.intl, "contribution", "deleteContributionDialog.title"))
+            })
+    }
 
     header = () => {
         const { modulesManager, intl, pageInfo, policy } = this.props;
@@ -130,18 +186,50 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         }
     }
 
-    render() {
-        const { intl, family, classes, policiesPremiums, errorPoliciesPremiums, pageInfo, reset, readOnly } = this.props;
-        if (!family.uuid) return null;
 
-        let actions = !!readOnly ? [] : [
+    rowDisabled = (i) => !!i && !!i.validityTo
+    rowLocked = (i) => !!i && !!i.clientMutationId
+
+
+
+    render() {
+        const {
+            intl,
+            family,
+            classes,
+            policiesPremiums,
+            errorPoliciesPremiums,
+            pageInfo,
+            readOnly,
+            policy,
+            rights,
+            fetchingPoliciesPremiums,
+        } = this.props;
+        if (!family.uuid) return null;
+        const canAdd = rights.includes(RIGHT_CONTRIBUTION_ADD);
+        let actions = [
             {
-                button: <IconButton onClick={this.addNewPremium}><AddIcon /></IconButton>,
-                tooltip: formatMessage(intl, "contribution", "addNewPremium.tooltip")
+                button: <IconButton onClick={this.query}><ReplayIcon /></IconButton>,
+                tooltip: formatMessage(intl, "contribution", "reload.tooltip")
             }
         ];
+        if (!!!readOnly && canAdd) {
+            actions.push(
+                {
+                    button: <IconButton className={!policy ? classes.disabled : ""} onClick={!policy ? null : this.addNewPremium}><AddIcon /></IconButton>,
+                    tooltip: !policy ?
+                        formatMessage(intl, "contribution", "addNewPremium.tooltip.selectPolicy") :
+                        formatMessage(intl, "contribution", "addNewPremium.tooltip")
+                }
+            )
+        }
 
         return (
+            <>
+            <DeleteContributionDialog
+                    contribution={this.state.deleteContribution}
+                    onConfirm={this.deleteContribution}
+                    onCancel={e => this.setState({ deleteContribution: null })} />
             <Paper className={classes.paper}>
                 <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
                     <Grid item xs={8}>
@@ -163,10 +251,11 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                 </Grid>
                 <Divider />
                 <Table
+                    fetching={fetchingPoliciesPremiums}
                     module="contribution"
                     headerActions={this.headerActions}
                     headers={this.headers}
-                    itemFormatters={this.formatters}
+                    itemFormatters={this.itemFormatters()}
                     items={policiesPremiums || []}
                     error={errorPoliciesPremiums}
                     onDoubleClick={this.onDoubleClick}
@@ -177,16 +266,20 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                     defaultPageSize={this.defaultPageSize}
                     page={this.currentPage()}
                     pageSize={this.currentPageSize()}
+                    rowDisabled={i => this.rowDisabled(i)}
+                    rowLocked={i => this.rowLocked(i)}
                     count={pageInfo.totalCount}
                     onChangePage={this.onChangePage}
                     onChangeRowsPerPage={this.onChangeRowsPerPage}
                 />
             </Paper>
+            </>
         )
     }
 }
 
 const mapStateToProps = state => ({
+    rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     family: state.insuree.family || {},
     policy: state.policy.policy,
     policies: state.policy.policies,
@@ -195,10 +288,18 @@ const mapStateToProps = state => ({
     policiesPremiums: state.contribution.policiesPremiums,
     pageInfo: state.contribution.policiesPremiumsPageInfo,
     errorPoliciesPremiums: state.contribution.errorPoliciesPremiums,
+    errorContributions: state.contribution.errorContributions,
+    submittingMutation: state.contribution.submittingMutation,
+    mutation: state.contribution.mutation,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchPoliciesPremiums, selectPremium }, dispatch);
+    return bindActionCreators({
+        fetch: fetchPoliciesPremiums,
+        selectPremium,
+        deleteContribution,
+        journalize,
+    }, dispatch);
 };
 
 export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PoliciesPremiumsOverview)))));

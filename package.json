@@ -1,6 +1,6 @@
 {
   "name": "@openimis/fe-contribution",
-  "version": "1.2.1-rc5",
+  "version": "1.2.1-rc6",
   "license": "AGPL-3.0-only",
   "description": "openIMIS Frontend Contribution reference module",
   "repository": "openimis/openimis-fe-contribution_js",

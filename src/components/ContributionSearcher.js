@@ -116,10 +116,7 @@ class ContributionSearcher extends Component {
     itemFormatters = () => {
         const formatters =  [
             c => formatDateFromISO(this.props.modulesManager, this.props.intl, c.payDate),
-            c => <PublishedComponent
-                readOnly={true}
-                pubRef="payer.PayerPicker" withLabel={false} value={c.payer}
-            />,
+            c => c.payer?.name ?? "",
             c => formatAmount(this.props.intl, c.amount),
             c => <PublishedComponent
                 readOnly={true}

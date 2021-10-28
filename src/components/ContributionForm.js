@@ -6,7 +6,7 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
 import {
     formatMessageWithValues, withModulesManager, withHistory,
-    Form, ProgressOrError, journalize, coreConfirm
+    Form, ProgressOrError, journalize, coreConfirm, Helmet
 } from "@openimis/fe-core";
 import { RIGHT_CONTRIBUTION } from "../constants";
 
@@ -34,12 +34,6 @@ class ContributionForm extends Component {
     }
 
     componentDidMount() {
-        document.title = formatMessageWithValues(
-            this.props.intl,
-            "contribution",
-            "ContributionOverview.title",
-            { label: "" }
-        );
         const {
             contribution_uuid,
             policy_uuid,
@@ -202,6 +196,7 @@ class ContributionForm extends Component {
         }];
         return (
             <div className={!!runningMutation ? classes.lockedPage : null}>
+                <Helmet title={formatMessageWithValues(this.props.intl, "contribution", "ContributionOverview.title")} />
                 <SaveContributionDialog
                     contribution={saveContribution && contribution}
                     onConfirm={this._save}

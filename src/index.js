@@ -34,14 +34,14 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION + "/:policy_uuid", component: ContributionPage },
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW + "/:contribution_uuid", component: ContributionOverviewPage },
   ],
-  "insuree.MainMenu": [
+  /*"insuree.MainMenu": [
     {
       text: <FormattedMessage module="contribution" id="menu.contributions" />,
       icon: <MonetizationOn />,
       route: "/" + ROUTE_CONTRIBUTION_CONTRIBUTIONS,
       filter: rights => rights.includes(RIGHT_CONTRIBUTION)
     }
-  ],
+  ],*/
   "insuree.FamilyOverview.panels": [PoliciesPremiumsOverview],
 }
 

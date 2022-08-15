@@ -27,7 +27,7 @@ export function fetchPoliciesPremiums(mm, filters) {
         filters,
         [
             "id", "uuid", "payDate",
-            `payer${mm.getProjection("payer.PayerPicker.projection")}`,
+            //`payer${mm.getProjection("payer.PayerPicker.projection")}`,
             "amount", "payType", "receipt", "isPhotoFee"]
     );
     return graphql(payload, 'CONTRIBUTION_POLICES_PREMIUMS');

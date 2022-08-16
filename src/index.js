@@ -34,7 +34,9 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION + "/:policy_uuid", component: ContributionPage },
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW + "/:contribution_uuid", component: ContributionOverviewPage },
   ],
-  /*"insuree.MainMenu": [
+  /*
+  ****** Desactivation Menu ******
+  "insuree.MainMenu": [
     {
       text: <FormattedMessage module="contribution" id="menu.contributions" />,
       icon: <MonetizationOn />,
@@ -42,7 +44,8 @@ const DEFAULT_CONFIG = {
       filter: rights => rights.includes(RIGHT_CONTRIBUTION)
     }
   ],*/
-  "insuree.FamilyOverview.panels": [PoliciesPremiumsOverview],
+  // Desactivation panel on Insuree Form
+  //"insuree.FamilyOverview.panels": [PoliciesPremiumsOverview],
 }
 
 export const ContributionModule = (cfg) => {

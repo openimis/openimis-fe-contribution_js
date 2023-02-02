@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import { injectIntl } from 'react-intl';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
+
 import {
     formatMessageWithValues, withModulesManager, withHistory,
     Form, ProgressOrError, journalize, coreConfirm, Helmet
 } from "@openimis/fe-core";
+import { fetchContribution, newContribution, createContribution, fetchPolicySummary, clearContribution } from "../actions";
 import { RIGHT_CONTRIBUTION } from "../constants";
-
-import { fetchContribution, newContribution, createContribution, fetchPolicySummary } from "../actions";
 import ContributionMasterPanel from "./ContributionMasterPanel";
 import SaveContributionDialog from "./SaveContributionDialog";
 
@@ -96,7 +97,10 @@ class ContributionForm extends Component {
             }));
         }
     }
-
+    
+    componentWillUnmount = () => {
+        this.props.clearContribution();
+    };
 
     reload = () => {
         const { contribution } = this.state;
@@ -109,6 +113,7 @@ class ContributionForm extends Component {
 
     canSave = () => {
         const { contribution } = this.state;
+        const { isReceiptValid } = this.props;
         if (!contribution ||
             (contribution && (
                 !contribution.payDate ||
@@ -116,7 +121,8 @@ class ContributionForm extends Component {
                 !contribution.amount ||
                 !contribution.receipt ||
                 !contribution.policy ||
-                (contribution.policy && !contribution.policy.uuid)
+                (contribution.policy && !contribution.policy.uuid) ||
+                !isReceiptValid
             ))) return false;
         return true;
     }
@@ -239,6 +245,7 @@ const mapStateToProps = (state, props) => ({
     contribution: state.contribution.contribution,
     confirmed: state.core.confirmed,
     state: state,
+    isReceiptValid: state.contribution?.validationFields?.contributionReceipt.isValid,
 })
 
 const mapDispatchToProps = dispatch => {
@@ -247,6 +254,7 @@ const mapDispatchToProps = dispatch => {
         fetchPolicySummary,
         newContribution,
         createContribution,
+        clearContribution,
         journalize,
         coreConfirm,
     }, dispatch);

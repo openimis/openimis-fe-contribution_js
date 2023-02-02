@@ -9,6 +9,7 @@
     "contribution.category.contribution": "Contribution",
     "contribution.category.null": "Any",
     "contribution.category.photoFee": "Photo Fee",
+    "contribution.alreadyUsed": "Receipt already in use for product {productCode}",
     "contribution.ContributionOverview.newTitle": "Add a contribution",
     "contribution.ContributionOverview.title": "Contribution Details",
     "contribution.contributionSummaries": "{count} contributions Found",

@@ -1,5 +1,6 @@
 import {
     graphql,
+    graphqlWithVariables,
     formatPageQuery,
     formatPageQueryWithCount,
     formatMutation,
@@ -85,8 +86,9 @@ export function fetchPolicySummary(
   }
   const payload = formatPageQuery("policies",
     filters,
-    ["id", "uuid", "startDate", "product{name}", "expiryDate", "value"],
+    ["id", "uuid", "startDate", "product{name, code}", "expiryDate", "value"],
   );
+  console.log("payload", payload);
   return graphql(payload, 'CONTRIBUTION_POLICY_SUMMARY');
 }
 
@@ -146,7 +148,6 @@ export function updateContribution(mm, contribution, clientMutationLabel) {
   )
 }
 
-
 export function deleteContribution(mm, contribution, clientMutationLabel) {
   let mutation = formatMutation("deletePremium", `uuids: ["${contribution.uuid}"]`, clientMutationLabel);
   contribution.clientMutationId = mutation.clientMutationId;
@@ -161,4 +162,28 @@ export function deleteContribution(mm, contribution, clientMutationLabel) {
       contributionUuid: contribution.uuid,
     }
   )
+}
+
+export function clearContribution() {
+  return (dispatch) => {
+    dispatch({ type: `CONTRIBUTION_OVERVIEW_CLEAR` });
+  };
+}
+
+export function validateReceipt(mm, variables) {
+  return graphqlWithVariables(
+    `
+    query ($code: String!, $policyUuid: String!) {
+      isValid: validatePremiumCode(code: $code, policyUuid: $policyUuid)
+    }
+    `,
+    variables,
+    `CONTRIBUTION_FIELDS_VALIDATION`,
+  );
+}
+
+export function clearReceiptValidation(mm) {
+  return (dispatch) => {
+    dispatch({ type: `CONTRIBUTION_FIELDS_VALIDATION_CLEAR` });
+  };
 }

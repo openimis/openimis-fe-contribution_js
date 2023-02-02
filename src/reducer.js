@@ -160,6 +160,62 @@ function reducer(
                 contributionsPageInfo : { totalCount: 0 },
                 contribution: null,
             };
+        case "CONTRIBUTION_OVERVIEW_CLEAR":
+            return {
+                ...state,
+                fetchingContribution: false,
+                fetchedContribution: false,
+                contribution: null,
+                errorContribution: null,
+            };
+        case "CONTRIBUTION_FIELDS_VALIDATION_REQ":
+            return {
+                ...state,
+                validationFields: {
+                  ...state.validationFields,
+                  contributionReceipt: {
+                    isValidating: true,
+                    isValid: false,
+                    validationError: null,
+                  },
+                },
+              };
+        case "CONTRIBUTION_FIELDS_VALIDATION_RESP":
+            return {
+                ...state,
+                validationFields: {
+                  ...state.validationFields,
+                  contributionReceipt: {
+                    isValidating: false,
+                    isValid: action.payload?.data.isValid,
+                    validationError: formatGraphQLError(action.payload),
+                  },
+                },
+              };
+        case "CONTRIBUTION_FIELDS_VALIDATION_ERR":
+            return {
+                ...state,
+                validationFields: {
+                  ...state.validationFields,
+                  contributionReceipt: {
+                    isValidating: false,
+                    isValid: false,
+                    validationError: formatServerError(action.payload),
+                  },
+                },
+              };
+        case "CONTRIBUTION_FIELDS_VALIDATION_CLEAR":
+            return {
+                ...state,
+                validationFields: {
+                  ...state.validationFields,
+                  contributionReceipt: {
+                    isValidating: true,
+                    isValid: false,
+                    validationError: null,
+                  },
+                },
+              };
         case 'CONTRIBUTION_MUTATION_REQ':
             return dispatchMutationReq(state, action)
         case 'CONTRIBUTION_MUTATION_ERR':

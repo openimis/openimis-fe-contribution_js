@@ -216,6 +216,18 @@ function reducer(
                   },
                 },
               };
+        case "CONTRIBUTION_FIELDS_VALIDATION_SET_VALID":
+            return {
+                ...state,
+                validationFields: {
+                  ...state.validationFields,
+                  contributionReceipt: {
+                    isValidating: false,
+                    isValid: true,
+                    validationError: null,
+                  },
+                },
+              };
         case 'CONTRIBUTION_MUTATION_REQ':
             return dispatchMutationReq(state, action)
         case 'CONTRIBUTION_MUTATION_ERR':

@@ -182,6 +182,12 @@ export function validateReceipt(mm, variables) {
   );
 }
 
+export function setReceiptValid(mm) {
+  return (dispatch) => {
+    dispatch({ type: `CONTRIBUTION_FIELDS_VALIDATION_SET_VALID` });
+  };
+}
+
 export function clearReceiptValidation(mm) {
   return (dispatch) => {
     dispatch({ type: `CONTRIBUTION_FIELDS_VALIDATION_CLEAR` });

@@ -15,7 +15,7 @@ import {
   formatMessageWithValues,
   FormPanel,
 } from "@openimis/fe-core";
-import { validateReceipt, clearReceiptValidation } from "../actions";
+import { validateReceipt, clearReceiptValidation, setReceiptValid } from "../actions";
 
 const styles = (theme) => ({
   tableTitle: theme.table.title,
@@ -124,6 +124,7 @@ class ContributionMasterPanel extends FormPanel {
           <ValidatedTextInput
               action={validateReceipt}
               clearAction={clearReceiptValidation}
+              setValidAction={setReceiptValid}
               codeTakenLabel={formatMessageWithValues(intl, "contribution", "alreadyUsed", { productCode })}
               isValid={isReceiptValid}
               isValidating={isReceiptValidating}

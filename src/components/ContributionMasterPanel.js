@@ -15,7 +15,11 @@ import {
   formatMessageWithValues,
   FormPanel,
 } from "@openimis/fe-core";
-import { validateReceipt, clearReceiptValidation, setReceiptValid } from "../actions";
+import {
+  validateReceipt,
+  clearReceiptValidation,
+  setReceiptValid,
+} from "../actions";
 
 const styles = (theme) => ({
   tableTitle: theme.table.title,
@@ -30,11 +34,24 @@ class ContributionMasterPanel extends FormPanel {
     const { savedCode } = this.props;
     const shouldValidate = inputValue !== savedCode;
     return shouldValidate;
-  }
+  };
 
   render() {
-    const { intl, classes, edited, readOnly, isReceiptValid, isReceiptValidating, receiptValidationError} = this.props;
+    const {
+      intl,
+      classes,
+      edited,
+      readOnly,
+      isReceiptValid,
+      isReceiptValidating,
+      receiptValidationError,
+    } = this.props;
     const productCode = edited?.policy?.product?.code;
+
+    let balance =
+      Number(edited?.policy?.value) -
+      edited?.policy?.sumPremiums -
+      (edited?.amount || 0);
 
     return (
       <Fragment>
@@ -100,16 +117,7 @@ class ContributionMasterPanel extends FormPanel {
               onChange={(p) => this.updateAttribute("payer", p)}
             />
           </Grid>
-          <Grid item xs={3} className={classes.item}>
-            <AmountInput
-              module="contribution"
-              label="contribution.amount"
-              required
-              readOnly={readOnly}
-              value={!edited ? "" : edited.amount}
-              onChange={(c) => this.updateAttribute("amount", c)}
-            />
-          </Grid>
+
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
               pubRef="contribution.PremiumPaymentTypePicker"
@@ -118,26 +126,6 @@ class ContributionMasterPanel extends FormPanel {
               readOnly={readOnly}
               value={!edited ? "" : edited.payType}
               onChange={(c) => this.updateAttribute("payType", c)}
-            />
-          </Grid>
-          <Grid item xs={3} className={classes.item}>
-          <ValidatedTextInput
-              action={validateReceipt}
-              clearAction={clearReceiptValidation}
-              setValidAction={setReceiptValid}
-              codeTakenLabel={formatMessageWithValues(intl, "contribution", "alreadyUsed", { productCode })}
-              isValid={isReceiptValid}
-              isValidating={isReceiptValidating}
-              itemQueryIdentifier="code"
-              label="contribution.receipt"
-              module="contribution"
-              onChange={(receipt) => this.updateAttribute("receipt", receipt)}
-              readOnly={readOnly}
-              required={true}
-              additionalQueryArgs={{policyUuid: edited?.policy?.uuid}}
-              shouldValidate={this.shouldValidate}
-              validationError={receiptValidationError}
-              value={edited?.receipt ?? ""}
             />
           </Grid>
           <Grid item xs={3} className={classes.item}>
@@ -151,6 +139,61 @@ class ContributionMasterPanel extends FormPanel {
               }}
             />
           </Grid>
+
+          <Grid item xs={3} className={classes.item}>
+            <ValidatedTextInput
+              action={validateReceipt}
+              clearAction={clearReceiptValidation}
+              setValidAction={setReceiptValid}
+              codeTakenLabel={formatMessageWithValues(
+                intl,
+                "contribution",
+                "alreadyUsed",
+                { productCode }
+              )}
+              isValid={isReceiptValid}
+              isValidating={isReceiptValidating}
+              itemQueryIdentifier="code"
+              label="contribution.receipt"
+              module="contribution"
+              onChange={(receipt) => this.updateAttribute("receipt", receipt)}
+              readOnly={readOnly}
+              required={true}
+              additionalQueryArgs={{ policyUuid: edited?.policy?.uuid }}
+              shouldValidate={this.shouldValidate}
+              validationError={receiptValidationError}
+              value={edited?.receipt ?? ""}
+            />
+          </Grid>
+
+          <Grid item xs={3} className={classes.item}>
+            <AmountInput
+              module="contribution"
+              label="contribution.amount"
+              required
+              readOnly={readOnly}
+              value={!edited ? "" : edited.amount}
+              onChange={(c) => this.updateAttribute("amount", c)}
+            />
+          </Grid>
+
+          <Grid item xs={3} className={classes.item}>
+            <AmountInput
+              module="policy"
+              label="Policy.sumPremiums"
+              readOnly={true}
+              value={!edited ? "" : edited?.policy?.sumPremiums}
+            />
+          </Grid>
+          <Grid item xs={3} className={classes.item}>
+            <AmountInput
+              name="balance"
+              module="policy"
+              label="policies.balance"
+              readOnly={true}
+              value={balance}
+            />
+          </Grid>
         </Grid>
       </Fragment>
     );
@@ -158,14 +201,21 @@ class ContributionMasterPanel extends FormPanel {
 }
 
 const mapStateToProps = (store) => ({
-  isReceiptValidating: store.contribution?.validationFields?.contributionReceipt.isValidating,
-  isReceiptValid: store.contribution?.validationFields?.contributionReceipt.isValid,
-  receiptValidationError: store.contribution?.validationFields?.contributionReceipt.validationError,
+  isReceiptValidating:
+    store.contribution?.validationFields?.contributionReceipt.isValidating,
+  isReceiptValid:
+    store.contribution?.validationFields?.contributionReceipt.isValid,
+  receiptValidationError:
+    store.contribution?.validationFields?.contributionReceipt.validationError,
   savedCode: store.contribution.contribution?.receipt,
 });
 
 export default withModulesManager(
   withHistory(
-    injectIntl(connect(mapStateToProps)(withTheme(withStyles(styles)(ContributionMasterPanel))))
+    injectIntl(
+      connect(mapStateToProps)(
+        withTheme(withStyles(styles)(ContributionMasterPanel))
+      )
+    )
   )
 );

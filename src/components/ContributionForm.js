@@ -227,6 +227,7 @@ class ContributionForm extends Component {
                         save={!!save ? this.confirmSave : null}
                         update={update}
                         onActionToConfirm={this.onActionToConfirm}
+                        openDirty={save}
                     />
                 )}
             </div>

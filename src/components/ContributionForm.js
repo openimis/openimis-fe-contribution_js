@@ -10,7 +10,7 @@ import {
     formatMessageWithValues, withModulesManager, withHistory,
     Form, ProgressOrError, journalize, coreConfirm, Helmet
 } from "@openimis/fe-core";
-import { fetchContribution, newContribution, createContribution, fetchPolicySummary, clearContribution } from "../actions";
+import { fetchContribution, newContribution, createContribution, fetchPolicySummary, clearContribution, fetchPoliciesPremiums } from "../actions";
 import { RIGHT_CONTRIBUTION } from "../constants";
 import ContributionMasterPanel from "./ContributionMasterPanel";
 import SaveContributionDialog from "./SaveContributionDialog";
@@ -41,8 +41,8 @@ class ContributionForm extends Component {
             modulesManager,
             fetchContribution,
             fetchPolicySummary,
+            fetchPoliciesPremiums,
         } = this.props;
-
         if (contribution_uuid) {
             this.setState(
                 (state, props) => (
@@ -55,7 +55,8 @@ class ContributionForm extends Component {
             )
         }
         if (policy_uuid) {
-            fetchPolicySummary(modulesManager, policy_uuid);
+            fetchPolicySummary(modulesManager, [policy_uuid]);
+            fetchPoliciesPremiums(modulesManager, [`policyUuids: "${policy_uuid}"`]);
             this.setState({
                 contribution: {
                     ... this._newContribution(),
@@ -72,11 +73,11 @@ class ContributionForm extends Component {
         if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
             const { contribution } = this.props;
             this.setState(
-            {
-                contribution,
-                contribution_uuid: contribution.uuid,
-                newContribution: false
-            });
+                {
+                    contribution,
+                    contribution_uuid: contribution.uuid,
+                    newContribution: false
+                });
         } else if (prevProps.contribution_uuid && !this.props.contribution_uuid) {
             this.setState({ contribution: this._newContribution(), newContribution: true, contribution_uuid: null });
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
@@ -91,13 +92,13 @@ class ContributionForm extends Component {
         if (!prevProps.policySummary && !!this.props.policySummary) {
             this.setState(prevState => ({
                 contribution: {
-                    ... prevState.contribution,
+                    ...prevState.contribution,
                     policy: this.props.policySummary,
                 },
             }));
         }
     }
-    
+
     componentWillUnmount = () => {
         this.props.clearContribution();
     };
@@ -145,7 +146,7 @@ class ContributionForm extends Component {
                     saveContribution: false,
                 }
             );
-            },
+        },
         );
     }
 
@@ -187,7 +188,7 @@ class ContributionForm extends Component {
             readOnly = false,
             save,
             back,
-         } = this.props;
+        } = this.props;
         const { contribution, saveContribution, newContribution, reset, update } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         let runningMutation = !!contribution && !!contribution.clientMutationId
@@ -240,6 +241,7 @@ const mapStateToProps = (state, props) => ({
     fetchingContribution: state.contribution.fetchingContribution,
     errorContribution: state.contribution.errorContribution,
     fetchedContribution: state.contribution.fetchedContribution,
+    installmentsNumber: state.contribution.policiesPremiumsPageInfo.totalCount,
     submittingMutation: state.contribution.submittingMutation,
     policySummary: state.contribution.policySummary,
     mutation: state.contribution.mutation,
@@ -251,6 +253,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
+        fetchPoliciesPremiums,
         fetchContribution,
         fetchPolicySummary,
         newContribution,

@@ -36,24 +36,6 @@ export function fetchPoliciesPremiums(mm, filters) {
   return graphql(payload, "CONTRIBUTION_POLICES_PREMIUMS");
 }
 
-export function fetchPoliciesPremiums2(mm, policyUuid) {
-  let filters = [];
-  if (!!policyUuid) {
-    filters.push(`uuid: "${policyUuid}"`);
-  }
-  let payload = formatPageQueryWithCount("premiumsByPolicies", filters, [
-    "id",
-    "uuid",
-    "payDate",
-    `payer${mm.getProjection("payer.PayerPicker.projection")}`,
-    "amount",
-    "payType",
-    "receipt",
-    "isPhotoFee",
-  ]);
-  return graphql(payload, "CONTRIBUTION_POLICES_PREMIUMS");
-}
-
 export function fetchContributionsSummaries(mm, filters) {
   let projections = [
     "id",

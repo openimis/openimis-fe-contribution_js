@@ -189,6 +189,7 @@ class ContributionForm extends Component {
             save,
             back,
         } = this.props;
+
         const { contribution, saveContribution, newContribution, reset, update } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         let runningMutation = !!contribution && !!contribution.clientMutationId
@@ -207,7 +208,9 @@ class ContributionForm extends Component {
                 <SaveContributionDialog
                     contribution={saveContribution && contribution}
                     onConfirm={this._save}
-                    onCancel={() => this._cancelSave()} />
+                    onCancel={() => this._cancelSave()}
+                    installmentsNumber={this.props?.installmentsNumber}
+                />
                 <ProgressOrError progress={fetchingContribution} error={errorContribution} />
                 {((!!fetchedContribution && !!contribution && contribution.uuid === contribution_uuid) || !contribution_uuid) && (
                     <Form

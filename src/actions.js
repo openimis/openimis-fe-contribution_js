@@ -117,7 +117,7 @@ export function fetchPolicySummary(mm, policyUuid) {
     "id",
     "uuid",
     "startDate",
-    "product{name, code}",
+    "product{name, code, maxInstallments}",
     "expiryDate",
     "value",
     "sumPremiums",

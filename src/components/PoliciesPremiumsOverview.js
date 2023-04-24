@@ -32,7 +32,8 @@ import {
     journalize,
     historyPush,
     FormattedMessage,
-  } from "@openimis/fe-core";
+    SelectDialog,
+} from "@openimis/fe-core";
 import {
     fetchPoliciesPremiums,
     selectPremium,
@@ -277,34 +278,16 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         }
         return (
             <>
-                <Dialog onClose={this.state.actionDialogClose} open={this?.state?.openDialog}>
-                    <DialogTitle>
-                        <FormattedMessage
-                            module="contribution"
-                            id="addContributionDialog.maxINstallments.title"
-                        />
-                    </DialogTitle>
-                    <DialogContent>
-                        <FormattedMessage
-                            module="contribution"
-                            id="addContributionDialog.maxINstallments.message"
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.actionDialogClose}>
-                            <FormattedMessage
-                                module="contribution"
-                                id="contribution.saveContributionDialog.no.button"
-                            />
-                        </Button>
-                        <Button onClick={this.addNewPremium}>
-                            <FormattedMessage
-                                module="contribution"
-                                id="contribution.saveContributionDialog.yes.button"
-                            />
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <SelectDialog
+                    confirmState={this?.state?.openDialog}
+                    onConfirm={this.addNewPremium}
+                    onClose={this.actionDialogClose}
+                    module="contribution"
+                    confirmTitle="addContributionDialog.maxINstallments.title"
+                    confirmMessage="addContributionDialog.maxINstallments.message"
+                    confirmationButton="contribution.saveContributionDialog.yes.button"
+                    rejectionButton="contribution.saveContributionDialog.no.button"
+                />
                 <DeleteContributionDialog
                     contribution={this.state.deleteContribution}
                     onConfirm={this.deleteContribution}

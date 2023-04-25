@@ -52,8 +52,7 @@ class ContributionMasterPanel extends FormPanel {
       Number(edited?.policy?.value) -
       edited?.policy?.sumPremiums -
       (edited?.amount || 0);
-
-    return (
+      return (
       <Fragment>
         {!!edited && !!edited.policy && !!edited.policy.value && (
           <Grid container className={classes.item}>
@@ -182,7 +181,8 @@ class ContributionMasterPanel extends FormPanel {
               module="policy"
               label="Policy.sumPremiums"
               readOnly={true}
-              value={!edited ? "" : edited?.policy?.sumPremiums}
+              value={edited?.policy?.sumPremiums || 0}
+              displayZero={true}
             />
           </Grid>
           <Grid item xs={3} className={classes.item}>
@@ -191,7 +191,8 @@ class ContributionMasterPanel extends FormPanel {
               module="policy"
               label="policies.balance"
               readOnly={true}
-              value={balance}
+              value={balance || 0}
+              displayZero={true}
             />
           </Grid>
         </Grid>

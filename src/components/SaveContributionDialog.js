@@ -19,12 +19,14 @@ import {
 import { FormattedMessage } from "@openimis/fe-core";
 
 const SaveContributionDialog = ({
-    classes, contribution, onCancel, onConfirm
+    classes, contribution, onCancel, onConfirm, installmentsNumber
 }) => {
     if (!contribution.policy || !contribution.policy.value) return null;
     const [step, setStep] = useState(1);
-    const amount = parseInt(contribution.amount, 10);
+    const sumPremiums = parseInt(contribution.policy.sumPremiums || 0, 10);
+    const amount = parseInt(contribution.amount, 10) + sumPremiums;
     const policyValue = parseInt(contribution.policy.value, 10);
+    const max_installments = contribution?.policy?.product?.maxInstallments;
     return (
         <Dialog
             open={!!contribution}
@@ -85,6 +87,16 @@ const SaveContributionDialog = ({
                         </DialogContentText>
                     )
                 }
+                {
+                    installmentsNumber >= max_installments && (
+                        <DialogContentText>
+                            <FormattedMessage
+                                module="contribution"
+                                id="contribution.saveContributionDialog.maxINstallments.message"
+                            />
+                        </DialogContentText>
+                    )
+                }
             </DialogContent>
             <DialogActions>
 
@@ -124,7 +136,7 @@ const SaveContributionDialog = ({
                 {
                     step === 1 && (
                         <Button onClick={onCancel} className={classes.secondaryButton} >
-                            <FormattedMessage module="core" id="cancel"/>
+                            <FormattedMessage module="core" id="cancel" />
                         </Button>
                     )
                 }

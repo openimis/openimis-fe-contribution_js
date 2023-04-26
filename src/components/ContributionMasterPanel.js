@@ -171,7 +171,8 @@ class ContributionMasterPanel extends FormPanel {
               label="contribution.amount"
               required
               readOnly={readOnly}
-              value={!edited ? "" : edited.amount}
+              value={edited?.amount || 0}
+              displayZero={true}
               onChange={(c) => this.updateAttribute("amount", c)}
             />
           </Grid>

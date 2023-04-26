@@ -189,7 +189,7 @@ class ContributionForm extends Component {
             save,
             back,
         } = this.props;
-
+        
         const { contribution, saveContribution, newContribution, reset, update } = this.state;
         if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
         let runningMutation = !!contribution && !!contribution.clientMutationId

@@ -116,7 +116,9 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     componentDidUpdate(prevProps) {
         if (this.policiesChanged(prevProps)) {
             this.query();
-            this.props.fetchPolicySummary(this.props.modulesManager, [this.props?.policy?.policy_uuid])
+            if (this.props?.policy?.policyUuid) {
+                this.props.fetchPolicySummary(this.props.modulesManager, this.props?.policy?.policyUuid)
+            }
         }
         if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);

@@ -142,6 +142,7 @@ class ContributionForm extends Component {
           !contribution.amount ||
           !contribution.receipt ||
           !contribution.policy ||
+          contribution.validityTo ||
           (contribution.policy && !contribution.policy.uuid) ||
           !isReceiptValid))
     )
@@ -216,7 +217,13 @@ class ContributionForm extends Component {
       },
     ];
     return (
-      <div className={!!runningMutation ? classes.lockedPage : null}>
+      <div
+        className={
+          !!runningMutation || contribution?.validityTo
+            ? classes.lockedPage
+            : null
+        }
+      >
         <Helmet
           title={formatMessageWithValues(
             this.props.intl,

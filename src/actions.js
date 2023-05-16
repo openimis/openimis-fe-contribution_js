@@ -17,6 +17,7 @@ const CONTRIBUTION_FULL_PROJECTION = (mm) => [
   "payType",
   "receipt",
   "isPhotoFee",
+  "validityTo",
   "clientMutationId",
   `payer${mm.getProjection("payer.PayerPicker.projection")}`,
   `policy${mm.getProjection("policy.PolicyPicker.projection")}`,

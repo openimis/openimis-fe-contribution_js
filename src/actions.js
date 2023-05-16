@@ -17,12 +17,31 @@ const CONTRIBUTION_FULL_PROJECTION = (mm) => [
   "payType",
   "receipt",
   "isPhotoFee",
+  "validityTo",
   "clientMutationId",
   `payer${mm.getProjection("payer.PayerPicker.projection")}`,
   `policy${mm.getProjection("policy.PolicyPicker.projection")}`,
 ];
 
 export function fetchPoliciesPremiums(mm, filters) {
+  let payload = formatPageQueryWithCount("premiumsByPolicies", filters, [
+    "id",
+    "uuid",
+    "payDate",
+    `payer${mm.getProjection("payer.PayerPicker.projection")}`,
+    "amount",
+    "payType",
+    "receipt",
+    "isPhotoFee",
+  ]);
+  return graphql(payload, "CONTRIBUTION_POLICES_PREMIUMS");
+}
+
+export function fetchPoliciesPremiums2(mm, policyUuid) {
+  let filters = [];
+  if (!!policyUuid) {
+    filters.push(`uuid: "${policyUuid}"`);
+  }
   let payload = formatPageQueryWithCount("premiumsByPolicies", filters, [
     "id",
     "uuid",
@@ -99,7 +118,7 @@ export function fetchPolicySummary(mm, policyUuid) {
     "id",
     "uuid",
     "startDate",
-    "product{name, code}",
+    "product{name, code, maxInstallments}",
     "expiryDate",
     "value",
     "sumPremiums",

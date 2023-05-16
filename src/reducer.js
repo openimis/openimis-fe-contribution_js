@@ -110,6 +110,8 @@ function reducer(
     case "CONTRIBUTION_POLICY_SUMMARY_REQ":
       return {
         ...state,
+        fetchingPolicySummary: true,
+        fetchedPolicySummary: false,
         policySummary: null,
         errorPolicySummary: null,
       };
@@ -122,11 +124,14 @@ function reducer(
       return {
         ...state,
         policySummary,
+        fetchingPolicySummary: false,
+        fetchedPolicySummary: true,
         errorPolicySummary: formatGraphQLError(action.payload),
       };
     case "CONTRIBUTION_POLICY_SUMMARY_ERR":
       return {
         ...state,
+        fetchingPolicySummary: false,
         errorPolicySummary: formatServerError(action.payload),
       };
     case "CONTRIBUTION_OVERVIEW_REQ":

@@ -27,22 +27,6 @@ const styles = (theme) => ({
 });
 
 class ContributionFilter extends Component {
-  //   state = {
-  //     showHistory: false,
-  //   };
-
-  //   componentDidUpdate(prevProps) {
-  //     if (
-  //       prevProps.filters["showHistory"] !== this.props.filters["showHistory"] &&
-  //       !!this.props.filters["showHistory"] &&
-  //       this.state.showHistory !== this.props.filters["showHistory"]["value"]
-  //     ) {
-  //       this.setState((state, props) => ({
-  //         showHistory: props.filters["showHistory"]["value"],
-  //       }));
-  //     }
-  //   }
-
   debouncedOnChangeFilter = _debounce(
     this.props.onChangeFilters,
     this.props.modulesManager.getConf("fe-contribution", "debounceTime", 200)
@@ -68,20 +52,6 @@ class ContributionFilter extends Component {
     ];
     this.props.onChangeFilters(filters);
   };
-
-  //   _onChangeShowHistory = () => {
-  //     let filters = [
-  //       {
-  //         id: "showHistory",
-  //         value: !this.state.showHistory,
-  //         filter: `showHistory: ${!this.state.showHistory}`,
-  //       },
-  //     ];
-  //     this.props.onChangeFilters(filters);
-  //     this.setState((state) => ({
-  //       showHistory: !state.showHistory,
-  //     }));
-  //   };
 
   render() {
     const { classes, filters, onChangeFilters, intl } = this.props;

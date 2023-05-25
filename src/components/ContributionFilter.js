@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import _debounce from "lodash/debounce";
-import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from "react-intl";
+import _debounce from "lodash/debounce";
+
 import { Grid, Checkbox, FormControlLabel } from "@material-ui/core";
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import {
   withModulesManager,
   AmountInput,
@@ -25,25 +27,25 @@ const styles = (theme) => ({
 });
 
 class ContributionFilter extends Component {
-  state = {
-    showHistory: false,
-  };
+  //   state = {
+  //     showHistory: false,
+  //   };
 
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.filters["showHistory"] !== this.props.filters["showHistory"] &&
-      !!this.props.filters["showHistory"] &&
-      this.state.showHistory !== this.props.filters["showHistory"]["value"]
-    ) {
-      this.setState((state, props) => ({
-        showHistory: props.filters["showHistory"]["value"],
-      }));
-    }
-  }
+  //   componentDidUpdate(prevProps) {
+  //     if (
+  //       prevProps.filters["showHistory"] !== this.props.filters["showHistory"] &&
+  //       !!this.props.filters["showHistory"] &&
+  //       this.state.showHistory !== this.props.filters["showHistory"]["value"]
+  //     ) {
+  //       this.setState((state, props) => ({
+  //         showHistory: props.filters["showHistory"]["value"],
+  //       }));
+  //     }
+  //   }
 
   debouncedOnChangeFilter = _debounce(
     this.props.onChangeFilters,
-    this.props.modulesManager.getConf("fe-contribution", "debounceTime", 800)
+    this.props.modulesManager.getConf("fe-contribution", "debounceTime", 200)
   );
 
   _filterValue = (k) => {
@@ -51,19 +53,35 @@ class ContributionFilter extends Component {
     return !!filters && !!filters[k] ? filters[k].value : null;
   };
 
-  _onChangeShowHistory = () => {
+  _filterTextFieldValue = (k) => {
+    const { filters } = this.props;
+    return !!filters && !!filters[k] ? filters[k].value : "";
+  };
+
+  _onChangeCheckbox = (key, value) => {
     let filters = [
       {
-        id: "showHistory",
-        value: !this.state.showHistory,
-        filter: `showHistory: ${!this.state.showHistory}`,
+        id: key,
+        value: value,
+        filter: `${key}: ${value}`,
       },
     ];
     this.props.onChangeFilters(filters);
-    this.setState((state) => ({
-      showHistory: !state.showHistory,
-    }));
   };
+
+  //   _onChangeShowHistory = () => {
+  //     let filters = [
+  //       {
+  //         id: "showHistory",
+  //         value: !this.state.showHistory,
+  //         filter: `showHistory: ${!this.state.showHistory}`,
+  //       },
+  //     ];
+  //     this.props.onChangeFilters(filters);
+  //     this.setState((state) => ({
+  //       showHistory: !state.showHistory,
+  //     }));
+  //   };
 
   render() {
     const { classes, filters, onChangeFilters, intl } = this.props;
@@ -231,7 +249,7 @@ class ContributionFilter extends Component {
                   module="contribution"
                   label="contribution.receipt"
                   name="receipt"
-                  value={this._filterValue("receipt")}
+                  value={this._filterTextFieldValue("receipt")}
                   onChange={(v) =>
                     this.debouncedOnChangeFilter([
                       {
@@ -257,8 +275,13 @@ class ContributionFilter extends Component {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={this.state.showHistory}
-                      onChange={(e) => this._onChangeShowHistory()}
+                      checked={!!this._filterValue("showHistory")}
+                      onChange={(event) =>
+                        this._onChangeCheckbox(
+                          "showHistory",
+                          event.target.checked
+                        )
+                      }
                     />
                   }
                   label={formatMessage(intl, "contribution", "showHistory")}

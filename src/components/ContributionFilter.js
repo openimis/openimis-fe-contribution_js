@@ -6,13 +6,13 @@ import { Grid, Checkbox, FormControlLabel } from "@material-ui/core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 
 import {
-    withModulesManager,
-    AmountInput,
-    PublishedComponent,
-    ControlledField,
-    TextInput,
-    formatMessage,
-    decodeId,
+  withModulesManager,
+  AmountInput,
+  PublishedComponent,
+  ControlledField,
+  TextInput,
+  formatMessage,
+  decodeId,
 } from "@openimis/fe-core";
 
 const styles = (theme) => ({

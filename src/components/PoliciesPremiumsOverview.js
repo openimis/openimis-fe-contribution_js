@@ -5,20 +5,41 @@ import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
 import _ from "lodash";
-import { Paper, IconButton, Grid, Divider, Typography, Tooltip} from "@material-ui/core";
+import { Paper, IconButton, Grid, Divider, Typography, Tooltip } from "@material-ui/core";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle
+} from '@material-ui/core';
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
 } from '@material-ui/icons';
-
 import {
-    formatMessage, formatMessageWithValues,
-    formatAmount, formatDateFromISO, withModulesManager, withTooltip,
-    formatSorter, sort,
-    PublishedComponent, Table, PagedDataHandler, journalize, historyPush
+    formatMessage,
+    formatMessageWithValues,
+    formatAmount,
+    formatDateFromISO,
+    withModulesManager,
+    withTooltip,
+    formatSorter,
+    sort,
+    PublishedComponent,
+    Table,
+    PagedDataHandler,
+    journalize,
+    historyPush,
+    FormattedMessage,
+    SelectDialog,
 } from "@openimis/fe-core";
-
-import { fetchPoliciesPremiums, selectPremium, deleteContribution } from "../actions";
+import {
+    fetchPoliciesPremiums,
+    selectPremium,
+    deleteContribution,
+    fetchPolicySummary
+} from "../actions";
 import DeleteContributionDialog from "./DeleteContributionDialog";
 
 import {
@@ -32,7 +53,7 @@ const styles = theme => ({
     paperHeaderAction: theme.paper.action,
     tableTitle: theme.table.title,
     fab: theme.fab,
-    disabled:{
+    disabled: {
         opacity: 0.4,
     }
 });
@@ -49,10 +70,29 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.setState({
             orderBy: "-payDate",
             deleteContribution: null,
+            openDialog: false,
         }, e => this.query())
     }
 
-    addNewPremium = () =>  {
+    checkNewPremium = () => {
+        const {
+            policy,
+            modulesManager,
+            history,
+            pageInfo,
+            policySummary,
+        } = this.props;
+        if (policySummary?.product?.maxInstallments <= pageInfo?.totalCount) {
+            this.setState(state => ({
+                ...state,
+                openDialog: true
+            }));
+        }
+        else
+            historyPush(modulesManager, history, "contribution.contributionNew", [policy.policyUuid]);
+    }
+
+    addNewPremium = () => {
         const {
             policy,
             modulesManager,
@@ -76,6 +116,9 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     componentDidUpdate(prevProps) {
         if (this.policiesChanged(prevProps)) {
             this.query();
+            if (this.props?.policy?.policyUuid) {
+                this.props.fetchPolicySummary(this.props.modulesManager, this.props?.policy?.policyUuid)
+            }
         }
         if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
@@ -124,7 +167,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
 
     confirmDelete = deleteContribution => {
-        this.setState({ deleteContribution,})
+        this.setState({ deleteContribution, })
     }
 
     deletePremiumAction = (i) =>
@@ -165,7 +208,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                     this.props.modulesManager,
                     contribution,
                     formatMessage(this.props.intl, "contribution", "deleteContributionDialog.title"))
-            })
+            });
     }
 
     header = () => {
@@ -190,7 +233,19 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     rowDisabled = (i) => !!i && !!i.validityTo
     rowLocked = (i) => !!i && !!i.clientMutationId
 
+    actionDialogOpen = () => {
+        this.setState(state => ({
+            ...state,
+            openDialog: true
+        }));
+    }
 
+    actionDialogClose = () => {
+        this.setState(state => ({
+            ...state,
+            openDialog: false
+        }));
+    }
 
     render() {
         const {
@@ -216,63 +271,72 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         if (!!!readOnly && canAdd) {
             actions.push(
                 {
-                    button: <IconButton className={!policy ? classes.disabled : ""} onClick={!policy ? null : this.addNewPremium}><AddIcon /></IconButton>,
+                    button: <IconButton className={!policy ? classes.disabled : ""} onClick={!policy ? null : this.checkNewPremium}><AddIcon /></IconButton>,
                     tooltip: !policy ?
                         formatMessage(intl, "contribution", "addNewPremium.tooltip.selectPolicy") :
                         formatMessage(intl, "contribution", "addNewPremium.tooltip")
                 }
             )
         }
-
         return (
             <>
-            <DeleteContributionDialog
+                <SelectDialog
+                    confirmState={this?.state?.openDialog}
+                    onConfirm={this.addNewPremium}
+                    onClose={this.actionDialogClose}
+                    module="contribution"
+                    confirmTitle="addContributionDialog.maxINstallments.title"
+                    confirmMessage="addContributionDialog.maxINstallments.message"
+                    confirmationButton="contribution.saveContributionDialog.yes.button"
+                    rejectionButton="contribution.saveContributionDialog.no.button"
+                />
+                <DeleteContributionDialog
                     contribution={this.state.deleteContribution}
                     onConfirm={this.deleteContribution}
                     onCancel={e => this.setState({ deleteContribution: null })} />
-            <Paper className={classes.paper}>
-                <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
-                    <Grid item xs={8}>
-                        <Typography className={classes.tableTitle}>
-                            {this.header()}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Grid container direction="row" justify="flex-end">
-                            {actions.map((a, idx) => {
-                                return (
-                                    <Grid item key={`form-action-${idx}`} className={classes.paperHeaderAction}>
-                                        {withTooltip(a.button, a.tooltip)}
-                                    </Grid>
-                                )
-                            })}
+                <Paper className={classes.paper}>
+                    <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
+                        <Grid item xs={8}>
+                            <Typography className={classes.tableTitle}>
+                                {this.header()}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Grid container direction="row" justify="flex-end">
+                                {actions.map((a, idx) => {
+                                    return (
+                                        <Grid item key={`form-action-${idx}`} className={classes.paperHeaderAction}>
+                                            {withTooltip(a.button, a.tooltip)}
+                                        </Grid>
+                                    )
+                                })}
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                <Divider />
-                <Table
-                    fetching={fetchingPoliciesPremiums}
-                    module="contribution"
-                    headerActions={this.headerActions}
-                    headers={this.headers}
-                    itemFormatters={this.itemFormatters()}
-                    items={policiesPremiums || []}
-                    error={errorPoliciesPremiums}
-                    onDoubleClick={this.onDoubleClick}
-                    withSelection={"single"}
-                    onChangeSelection={this.onChangeSelection}
-                    withPagination={true}
-                    rowsPerPageOptions={this.rowsPerPageOptions}
-                    defaultPageSize={this.defaultPageSize}
-                    page={this.currentPage()}
-                    pageSize={this.currentPageSize()}
-                    rowDisabled={i => this.rowDisabled(i)}
-                    rowLocked={i => this.rowLocked(i)}
-                    count={pageInfo.totalCount}
-                    onChangePage={this.onChangePage}
-                    onChangeRowsPerPage={this.onChangeRowsPerPage}
-                />
-            </Paper>
+                    <Divider />
+                    <Table
+                        fetching={fetchingPoliciesPremiums}
+                        module="contribution"
+                        headerActions={this.headerActions}
+                        headers={this.headers}
+                        itemFormatters={this.itemFormatters()}
+                        items={policiesPremiums || []}
+                        error={errorPoliciesPremiums}
+                        onDoubleClick={this.onDoubleClick}
+                        withSelection={"single"}
+                        onChangeSelection={this.onChangeSelection}
+                        withPagination={true}
+                        rowsPerPageOptions={this.rowsPerPageOptions}
+                        defaultPageSize={this.defaultPageSize}
+                        page={this.currentPage()}
+                        pageSize={this.currentPageSize()}
+                        rowDisabled={i => this.rowDisabled(i)}
+                        rowLocked={i => this.rowLocked(i)}
+                        count={pageInfo.totalCount}
+                        onChangePage={this.onChangePage}
+                        onChangeRowsPerPage={this.onChangeRowsPerPage}
+                    />
+                </Paper>
             </>
         )
     }
@@ -286,6 +350,9 @@ const mapStateToProps = state => ({
     fetchingPoliciesPremiums: state.contribution.fetchingPoliciesPremiums,
     fetchedPoliciesPremiums: state.contribution.fetchedPoliciesPremiums,
     policiesPremiums: state.contribution.policiesPremiums,
+    fetchingPolicySummary: state?.contribution?.fetchingPolicySummary,
+    fetchedPolicySummary: state?.contribution?.fetchedPolicySummary,
+    policySummary: state?.contribution?.policySummary,
     pageInfo: state.contribution.policiesPremiumsPageInfo,
     errorPoliciesPremiums: state.contribution.errorPoliciesPremiums,
     errorContributions: state.contribution.errorContributions,
@@ -298,8 +365,17 @@ const mapDispatchToProps = dispatch => {
         fetch: fetchPoliciesPremiums,
         selectPremium,
         deleteContribution,
+        fetchPolicySummary,
         journalize,
     }, dispatch);
 };
 
-export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PoliciesPremiumsOverview)))));
+export default withModulesManager(
+    injectIntl(
+        withTheme(
+            withStyles(styles)(
+                connect(mapStateToProps, mapDispatchToProps)(PoliciesPremiumsOverview)
+            )
+        )
+    )
+);

@@ -1,7 +1,6 @@
 import { Grid } from "@material-ui/core";
 import { PublishedComponent, useModulesManager, useTranslations } from "@openimis/fe-core";
 import React from "react";
-import PremiumPaymentTypePicker from "../pickers/PremiumPaymentTypePicker";
 
 const PremiumCollectionReport = (props) => {
   const { values, setValues } = props;

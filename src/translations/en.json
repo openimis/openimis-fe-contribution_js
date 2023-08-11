@@ -57,7 +57,7 @@
     "contribution.PremiumCollectionReport.region": "Region",
     "contribution.PremiumCollectionReport.district": "District",
     "contribution.PremiumCollectionReport.product": "Product",
-    "contribution.PremiumCollectionReport.paymentType": "PaymentType",
+    "contribution.PremiumCollectionReport.paymentType": "Payment Type",
     "contribution.PremiumCollectionReport.paymentType.null": "Any",
     "contribution.PremiumCollectionReport.paymentType.C": "Cash",
     "contribution.PremiumCollectionReport.paymentType.B": "Bank transfer",

@@ -140,6 +140,7 @@ class ContributionForm extends Component {
         (!contribution.payDate ||
           !contribution.payType ||
           !contribution.amount ||
+          contribution.amount > contribution.policy.value || 
           !contribution.receipt ||
           !contribution.policy ||
           contribution.validityTo ||

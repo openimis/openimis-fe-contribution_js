@@ -172,6 +172,7 @@ class ContributionMasterPanel extends FormPanel {
               required
               readOnly={readOnly}
               value={edited?.amount || 0}
+              max={parseInt(edited.policy?.value, 10)}
               displayZero={true}
               onChange={(c) => this.updateAttribute("amount", c)}
             />

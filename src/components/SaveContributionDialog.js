@@ -66,23 +66,13 @@ const SaveContributionDialog = ({
                     )
                 }
                 {
-                    amount >= policyValue && (
+                    amount === policyValue && (
                         <DialogContentText>
                             {
-                                amount === policyValue && (
-                                    <FormattedMessage
-                                        module="contribution"
-                                        id="saveContributionDialog.messageEqual"
-                                    />
-                                )
-                            }
-                            {
-                                amount > policyValue && (
-                                    <FormattedMessage
-                                        module="contribution"
-                                        id="saveContributionDialog.messageHigher"
-                                    />
-                                )
+                                <FormattedMessage
+                                    module="contribution"
+                                    id="saveContributionDialog.messageEqual"
+                                />
                             }
                         </DialogContentText>
                     )
@@ -101,7 +91,7 @@ const SaveContributionDialog = ({
             <DialogActions>
 
                 {
-                    amount >= policyValue && (
+                    amount === policyValue && (
                         <Button onClick={e => onConfirm()} className={classes.primaryButton} autoFocus>
                             <FormattedMessage module="contribution" id="saveContributionDialog.ok.button" />
                         </Button>

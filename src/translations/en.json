@@ -51,5 +51,15 @@
     "contribution.policy.name": "Policy name",
     "contribution.policy.value": "Policy value",
     "contribution.policy.startDate": "Start date",
-    "contribution.policy.expiryDate": "Expiry date"
+    "contribution.policy.expiryDate": "Expiry date",
+    "contribution.PremiumCollectionReport.dateStart": "Date From",
+    "contribution.PremiumCollectionReport.dateEnd": "Date To",
+    "contribution.PremiumCollectionReport.region": "Region",
+    "contribution.PremiumCollectionReport.district": "District",
+    "contribution.PremiumCollectionReport.product": "Product",
+    "contribution.PremiumCollectionReport.paymentType": "Payment Type",
+    "contribution.PremiumCollectionReport.paymentType.null": "Any",
+    "contribution.PremiumCollectionReport.paymentType.C": "Cash",
+    "contribution.PremiumCollectionReport.paymentType.B": "Bank transfer",
+    "contribution.PremiumCollectionReport.paymentType.M": "Mobile phone"
 }

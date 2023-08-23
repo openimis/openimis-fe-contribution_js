@@ -61,5 +61,10 @@
     "contribution.PremiumCollectionReport.paymentType.null": "Any",
     "contribution.PremiumCollectionReport.paymentType.C": "Cash",
     "contribution.PremiumCollectionReport.paymentType.B": "Bank transfer",
-    "contribution.PremiumCollectionReport.paymentType.M": "Mobile phone"
+    "contribution.PremiumCollectionReport.paymentType.M": "Mobile phone",
+    "contribution.PaymentCategoryOverviewReport.dateStart": "Date From",
+    "contribution.PaymentCategoryOverviewReport.dateEnd": "Date To",
+    "contribution.PaymentCategoryOverviewReport.region": "Region",
+    "contribution.PaymentCategoryOverviewReport.district": "District",
+    "contribution.PaymentCategoryOverviewReport.product": "Product"
 }

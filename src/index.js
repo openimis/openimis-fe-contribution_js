@@ -79,10 +79,10 @@ const DEFAULT_CONFIG = {
           params.requested_district_id = decodeId(values.district.id);
         }
         if (values.month) {
-          params.month = values.month;
+          params.requested_month = values.month;
         }
         params.requested_product_id = decodeId(values.product.id);
-        params.year = values.year;
+        params.requested_year = values.year;
         return params;
       },
     },

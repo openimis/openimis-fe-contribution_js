@@ -12,6 +12,7 @@ import reducer from "./reducer";
 
 import { RIGHT_CONTRIBUTION } from "./constants";
 import PremiumCollectionReport from "./reports/PremiumCollectionReport";
+import PaymentCategoryOverviewReport from "./reports/PaymentCategoryOverviewReport";
 
 const ROUTE_CONTRIBUTION_CONTRIBUTIONS = "contribution/contributions";
 const ROUTE_CONTRIBUTION_CONTRIBUTION = "contribution/new";
@@ -38,6 +39,26 @@ const DEFAULT_CONFIG = {
         }
         if (values.paymentType) {
           params.requested_payment_type = values.paymentType;
+        }
+        params.date_start = values.dateStart;
+        params.date_end = values.dateEnd;
+        return params;
+      },
+    },
+    {
+      key: "payment_category_overview",
+      component: PaymentCategoryOverviewReport,
+      isValid: (values) => values.dateStart && values.dateEnd,
+      getParams: (values) => {
+        const params = {}
+        if (values.region) {
+          params.requested_region_id = decodeId(values.region.id);
+        }
+        if (values.district) {
+          params.requested_district_id = decodeId(values.district.id);
+        }
+        if (values.product) {
+          params.requested_product_id = decodeId(values.product.id);
         }
         params.date_start = values.dateStart;
         params.date_end = values.dateEnd;

@@ -69,7 +69,5 @@
     "contribution.PaymentCategoryOverviewReport.product": "Product",
     "contribution.ContributionsDistributionReport.month": "Month",
     "contribution.ContributionsDistributionReport.year": "Year",
-    "contribution.ContributionsDistributionReport.region": "Region",
-    "contribution.ContributionsDistributionReport.district": "District",
     "contribution.ContributionsDistributionReport.product": "Product"
 }

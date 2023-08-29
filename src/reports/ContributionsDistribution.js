@@ -11,6 +11,16 @@ const ContributionsDistributionReport = (props) => {
     <Grid container direction="column" spacing={1}>
       <Grid item>
         <PublishedComponent
+          pubRef="product.ProductPicker"
+          onChange={(product) => setValues({ ...values, product })}
+          module="contribution"
+          required
+          value={values.product}
+          label={formatMessage("ContributionsDistributionReport.product")}
+        />
+      </Grid>
+      <Grid item>
+        <PublishedComponent
           pubRef="core.YearPicker"
           onChange={(year) =>
             setValues({
@@ -22,44 +32,7 @@ const ContributionsDistributionReport = (props) => {
           required
           withNull={false}
           value={values.year}
-        />
-      </Grid>
-      <Grid item>
-        <PublishedComponent
-          pubRef="product.ProductPicker"
-          onChange={(product) => setValues({ ...values, product })}
-          module="contribution"
-          required
-          value={values.product}
-          label={formatMessage("ContributionsDistributionReport.product")}
-        />
-      </Grid>
-      <Grid item>
-        <PublishedComponent
-          pubRef="location.LocationPicker"
-          onChange={(region) =>
-            setValues({
-                ...values,
-                region,
-                district:null,
-          })}
-          value={values.region}
-          locationLevel={0}
-          label={formatMessage("ContributionsDistributionReport.region")}
-        />
-      </Grid>
-      <Grid item>
-        <PublishedComponent
-          pubRef="location.LocationPicker"
-          onChange={(district) =>
-            setValues({
-                ...values,
-                district,
-          })}
-          value={values.district}
-          parentLocation={values.region}
-          locationLevel={1}
-          label={formatMessage("ContributionsDistributionReport.district")}
+          label={formatMessage("ContributionsDistributionReport.year")}
         />
       </Grid>
       <Grid item>

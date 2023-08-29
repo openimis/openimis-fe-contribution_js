@@ -66,5 +66,8 @@
     "contribution.PaymentCategoryOverviewReport.dateEnd": "Date To",
     "contribution.PaymentCategoryOverviewReport.region": "Region",
     "contribution.PaymentCategoryOverviewReport.district": "District",
-    "contribution.PaymentCategoryOverviewReport.product": "Product"
+    "contribution.PaymentCategoryOverviewReport.product": "Product",
+    "contribution.ContributionsDistributionReport.month": "Month",
+    "contribution.ContributionsDistributionReport.year": "Year",
+    "contribution.ContributionsDistributionReport.product": "Product"
 }

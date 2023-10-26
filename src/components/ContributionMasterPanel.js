@@ -30,6 +30,12 @@ const styles = (theme) => ({
 });
 
 class ContributionMasterPanel extends FormPanel {
+constructor(props){
+  super();
+  this.isMultiplePaymentsAllowed = props.modulesManager.getConf("fe-contribution", "isMultiplePaymentsAllowed", true);
+  this.onlyOnce = true;
+}
+
   shouldValidate = (inputValue) => {
     const { savedCode } = this.props;
     const shouldValidate = inputValue !== savedCode;
@@ -47,6 +53,11 @@ class ContributionMasterPanel extends FormPanel {
       receiptValidationError,
     } = this.props;
     const productCode = edited?.policy?.product?.code;
+
+    if (this.isMultiplePaymentsAllowed==true&&this.onlyOnce==true&&!!edited?.policy?.value){
+      this.onlyOnce = false;
+      this.updateAttribute("amount", parseInt(edited?.policy?.value));
+    }
 
     let balance =
       Number(edited?.policy?.value) -
@@ -170,8 +181,8 @@ class ContributionMasterPanel extends FormPanel {
               module="contribution"
               label="contribution.amount"
               required
-              readOnly={readOnly}
-              value={edited?.amount || 0}
+              readOnly={this.isMultiplePaymentsAllowed||readOnly}
+              value={this.isMultiplePaymentsAllowed ? edited?.policy?.value : (edited?.amount || 0)}
               max={edited.policy?.value}
               displayZero={true}
               onChange={(c) => this.updateAttribute("amount", c)}

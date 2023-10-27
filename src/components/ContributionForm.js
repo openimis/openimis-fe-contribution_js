@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { injectIntl } from "react-intl";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { Component } from 'react';
+import { injectIntl } from 'react-intl';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import ReplayIcon from "@material-ui/icons/Replay";
+import { withTheme, withStyles } from '@material-ui/core/styles';
+import ReplayIcon from '@material-ui/icons/Replay';
 
 import {
   formatMessageWithValues,
@@ -15,7 +15,7 @@ import {
   journalize,
   coreConfirm,
   Helmet,
-} from "@openimis/fe-core";
+} from '@openimis/fe-core';
 import {
   fetchContribution,
   newContribution,
@@ -23,17 +23,17 @@ import {
   fetchPolicySummary,
   clearContribution,
   fetchPoliciesPremiums,
-} from "../actions";
-import { RIGHT_CONTRIBUTION } from "../constants";
-import ContributionMasterPanel from "./ContributionMasterPanel";
-import SaveContributionDialog from "./SaveContributionDialog";
+} from '../actions';
+import { RIGHT_CONTRIBUTION } from '../constants';
+import ContributionMasterPanel from './ContributionMasterPanel';
+import SaveContributionDialog from './SaveContributionDialog';
 
 const styles = (theme) => ({
   lockedPage: theme.page.locked,
 });
 
 const CONTRIBUTION_OVERVIEW_MUTATIONS_KEY =
-  "contribution.ContributionOverview.mutations";
+  'contribution.ContributionOverview.mutations';
 
 class ContributionForm extends Component {
   _newContribution = () => ({
@@ -140,7 +140,7 @@ class ContributionForm extends Component {
         (!contribution.payDate ||
           !contribution.payType ||
           !contribution.amount ||
-          contribution.amount > contribution.policy.value || 
+          contribution.amount > contribution.policy.value ||
           !contribution.receipt ||
           !contribution.policy ||
           contribution.validityTo ||
@@ -228,8 +228,8 @@ class ContributionForm extends Component {
         <Helmet
           title={formatMessageWithValues(
             this.props.intl,
-            "contribution",
-            "ContributionOverview.title"
+            'contribution',
+            'ContributionOverview.title'
           )}
         />
         <SaveContributionDialog
@@ -247,11 +247,11 @@ class ContributionForm extends Component {
           contribution.uuid === contribution_uuid) ||
           !contribution_uuid) && (
           <Form
-            module="contribution"
+            module='contribution'
             title={
               !!newContribution
-                ? "ContributionOverview.newTitle"
-                : "ContributionOverview.title"
+                ? 'ContributionOverview.newTitle'
+                : 'ContributionOverview.title'
             }
             edited_id={contribution_uuid}
             edited={contribution}

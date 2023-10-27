@@ -41,7 +41,7 @@ class ContributionForm extends Component {
     this.isMultiplePaymentsAllowed = props.modulesManager.getConf(
       'fe-contribution',
       'isMultiplePaymentsAllowed',
-      DEFAULT.MULTIPLE_PAYMENT_ALLOWED
+      DEFAULT.MULTIPLE_PAYMENTS_ALLOWED
     );
   }
 

@@ -24,7 +24,7 @@ import {
   clearContribution,
   fetchPoliciesPremiums,
 } from '../actions';
-import { RIGHT_CONTRIBUTION } from '../constants';
+import { DEFAULT, RIGHT_CONTRIBUTION } from '../constants';
 import ContributionMasterPanel from './ContributionMasterPanel';
 import SaveContributionDialog from './SaveContributionDialog';
 
@@ -36,6 +36,15 @@ const CONTRIBUTION_OVERVIEW_MUTATIONS_KEY =
   'contribution.ContributionOverview.mutations';
 
 class ContributionForm extends Component {
+  constructor(props) {
+    super();
+    this.isMultiplePaymentsAllowed = props.modulesManager.getConf(
+      'fe-contribution',
+      'isMultiplePaymentsAllowed',
+      DEFAULT.MULTIPLE_PAYMENT_ALLOWED
+    );
+  }
+
   _newContribution = () => ({
     isPhotoFee: false,
   });
@@ -79,8 +88,8 @@ class ContributionForm extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { contribution } = this.props;
     if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
-      const { contribution } = this.props;
       this.setState({
         contribution,
         contribution_uuid: contribution.uuid,
@@ -107,14 +116,30 @@ class ContributionForm extends Component {
     ) {
       this.state.confirmedAction();
     }
-
     if (!prevProps.policySummary && !!this.props.policySummary) {
-      this.setState((prevState) => ({
-        contribution: {
+      this.setState((prevState) => {
+        const updatedContribution = {
           ...prevState.contribution,
           policy: this.props.policySummary,
-        },
-      }));
+        };
+
+        if (!this.isMultiplePaymentsAllowed) {
+          const contributionWithFixedAmount = {
+            ...updatedContribution,
+            amount: this.props.policySummary?.value ?? 0,
+          };
+
+          console.log(contributionWithFixedAmount);
+
+          return {
+            contribution: contributionWithFixedAmount,
+          };
+        }
+
+        return {
+          contribution: updatedContribution,
+        };
+      });
     }
   }
 

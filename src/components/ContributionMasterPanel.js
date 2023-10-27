@@ -20,6 +20,7 @@ import {
   clearReceiptValidation,
   setReceiptValid,
 } from '../actions';
+import { DEFAULT } from '../constants';
 
 const styles = (theme) => ({
   tableTitle: theme.table.title,
@@ -30,6 +31,15 @@ const styles = (theme) => ({
 });
 
 class ContributionMasterPanel extends FormPanel {
+  constructor(props) {
+    super();
+    this.isMultiplePaymentsAllowed = props.modulesManager.getConf(
+      'fe-contribution',
+      'isMultiplePaymentsAllowed',
+      DEFAULT.MULTIPLE_PAYMENT_ALLOWED
+    );
+  }
+
   shouldValidate = (inputValue) => {
     const { savedCode } = this.props;
     const shouldValidate = inputValue !== savedCode;
@@ -170,8 +180,8 @@ class ContributionMasterPanel extends FormPanel {
               module='contribution'
               label='contribution.amount'
               required
-              readOnly={readOnly}
-              value={edited?.amount || 0}
+              readOnly={readOnly || !this.isMultiplePaymentsAllowed}
+              value={edited?.amount ?? 0}
               max={edited.policy?.value}
               displayZero={true}
               onChange={(c) => this.updateAttribute('amount', c)}

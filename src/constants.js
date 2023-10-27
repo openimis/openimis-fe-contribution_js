@@ -8,5 +8,5 @@ export const PREMIUM_PAYMENT_TYPES = ["C", "B", "M"];
 export const PREMIUM_CATEGORIES = ["contribution", "photoFee"];
 
 export const DEFAULT = {
-    MULTIPLE_PAYMENT_ALLOWED: true,
+    MULTIPLE_PAYMENTS_ALLOWED: true,
 }

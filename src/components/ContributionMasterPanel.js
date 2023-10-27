@@ -36,7 +36,7 @@ class ContributionMasterPanel extends FormPanel {
     this.isMultiplePaymentsAllowed = props.modulesManager.getConf(
       'fe-contribution',
       'isMultiplePaymentsAllowed',
-      DEFAULT.MULTIPLE_PAYMENT_ALLOWED
+      DEFAULT.MULTIPLE_PAYMENTS_ALLOWED
     );
   }
 

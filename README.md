@@ -39,4 +39,4 @@ None
 * `state.insuree`, loading insuree policies (,eligibility,...)
 
 ## Configurations Options
-None
+- `isMultiplePaymentsAllowed`: Controls if the user is permitted to make installment payments. If __false__, user must make a single payment, fixed at the policy value. If __true__, user can pay off in installments. Default __true__.

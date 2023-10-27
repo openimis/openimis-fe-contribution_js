@@ -129,8 +129,6 @@ class ContributionForm extends Component {
             amount: this.props.policySummary?.value ?? 0,
           };
 
-          console.log(contributionWithFixedAmount);
-
           return {
             contribution: contributionWithFixedAmount,
           };

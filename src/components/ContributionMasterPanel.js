@@ -71,9 +71,7 @@ class ContributionMasterPanel extends FormPanel {
                 module='contribution'
                 label='contribution.policy.name'
                 readOnly={true}
-                value={
-                  (edited.policy.product && edited.policy.product.name) || ''
-                }
+                value={edited.policy?.product?.name || ''}
               />
             </Grid>
             <Grid item xs={3} className={classes.item}>
@@ -142,7 +140,7 @@ class ContributionMasterPanel extends FormPanel {
               pubRef='contribution.PremiumCategoryPicker'
               withNull={false}
               readOnly={readOnly}
-              value={edited && edited.isPhotoFee ? 'photoFee' : 'contribution'}
+              value={edited?.isPhotoFee ? 'photoFee' : 'contribution'}
               onChange={(c) => {
                 return this.updateAttribute('isPhotoFee', c === 'photoFee');
               }}

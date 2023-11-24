@@ -172,12 +172,11 @@ class ContributionMasterPanel extends FormPanel {
               required
               readOnly={readOnly}
               value={edited?.amount || 0}
-              max={edited.policy?.value}
+              max={Number(edited.policy?.value)}
               displayZero={true}
               onChange={(c) => this.updateAttribute("amount", c)}
             />
           </Grid>
-
           <Grid item xs={3} className={classes.item}>
             <AmountInput
               module="policy"

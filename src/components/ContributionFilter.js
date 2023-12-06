@@ -156,7 +156,7 @@ class ContributionFilter extends Component {
                         {
                           id: a,
                           value: !v ? null : v,
-                          filter: !!v ? `${a}: ${v}` : null,
+                          filter: !!v ? `${a}: "${v}"` : null,
                         },
                       ])
                     }

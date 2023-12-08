@@ -20,7 +20,7 @@ const CONTRIBUTION_FULL_PROJECTION = (mm) => [
   "validityTo",
   "clientMutationId",
   `payer${mm.getProjection("payer.PayerPicker.projection")}`,
-  `policy${mm.getProjection("policy.PolicyPicker.projection")}`,
+  `policy${mm.getProjection("policy.PolicyPicker.projection.withFamily")}`,
 ];
 
 export function fetchPoliciesPremiums(mm, filters) {

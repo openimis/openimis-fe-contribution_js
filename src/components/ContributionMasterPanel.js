@@ -54,8 +54,9 @@ class ContributionMasterPanel extends FormPanel {
       (edited?.amount || 0);
       return (
       <Fragment>
+        <Grid container className={classes.item}>
         {!!edited && !!edited.policy && !!edited.policy.value && (
-          <Grid container className={classes.item}>
+          <>
             <Grid item xs={3} className={classes.item}>
               <TextInput
                 module="contribution"
@@ -93,9 +94,45 @@ class ContributionMasterPanel extends FormPanel {
                 readOnly={true}
               />
             </Grid>
-          </Grid>
+            {edited.policy?.family?.uuid && (
+                <>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.insuranceNo'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.chfId}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.lastName'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.lastName}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.otherNames'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.otherNames}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <PublishedComponent
+                      pubRef='core.DatePicker'
+                      value={edited.policy.family?.headInsuree?.dob}
+                      module='contribution'
+                      label='contribution.familySummaries.dob'
+                      readOnly={true}
+                    />
+                  </Grid>
+                </>
+              )}
+          </>
         )}
-        <Grid container className={classes.item}>
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
               pubRef="core.DatePicker"

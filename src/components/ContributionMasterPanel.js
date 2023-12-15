@@ -50,7 +50,7 @@ class ContributionMasterPanel extends FormPanel {
 
     let balance =
       Number(edited?.policy?.value) -
-      edited?.policy?.sumPremiums -
+      edited?.otherPremiums -
       (edited?.amount || 0);
       return (
         <Grid container className={classes.item}>

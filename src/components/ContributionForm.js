@@ -5,9 +5,12 @@ import { bindActionCreators } from "redux";
 
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay";
+import People from "@material-ui/icons/People";
 
 import {
   formatMessageWithValues,
+  formatMessage,
+  historyPush,
   withModulesManager,
   withHistory,
   Form,
@@ -24,7 +27,7 @@ import {
   clearContribution,
   fetchPoliciesPremiums,
 } from "../actions";
-import { RIGHT_CONTRIBUTION } from "../constants";
+import { INSUREE_FAMILY_ROUTE_REF, RIGHT_CONTRIBUTION } from "../constants";
 import ContributionMasterPanel from "./ContributionMasterPanel";
 import SaveContributionDialog from "./SaveContributionDialog";
 
@@ -184,6 +187,20 @@ class ContributionForm extends Component {
     });
   }
 
+  redirectToFamily = () => {
+    try {
+      const { modulesManager, history } = this.props;
+      const { contribution } = this.state;
+      const familyUuid = contribution?.policy?.family?.uuid;
+
+      historyPush(modulesManager, history, INSUREE_FAMILY_ROUTE_REF, [
+        familyUuid,
+      ]);
+    } catch (error) {
+      console.error(`[CONTRIBUTION_FORM]: ${error}`);
+    }
+  };
+
   render() {
     const {
       modulesManager,
@@ -216,6 +233,12 @@ class ContributionForm extends Component {
         icon: <ReplayIcon />,
         onlyIfDirty: !readOnly && !runningMutation,
       },
+      {
+        doIt: this.redirectToFamily,
+        icon: <People />,
+        tooltip: formatMessage(this.props.intl, "contribution", "redirectToFamily.tooltip"),
+        disabled: !contribution?.policy?.family?.uuid,
+      }
     ];
     return (
       <div

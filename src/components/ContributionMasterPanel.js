@@ -152,11 +152,10 @@ class ContributionMasterPanel extends FormPanel {
               onChange={(p) => this.updateAttribute('payer', p)}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
               pubRef='contribution.PremiumPaymentTypePicker'
-              withNull={true}
+              withNull={false}
               required
               readOnly={readOnly}
               value={!edited ? '' : edited.payType}

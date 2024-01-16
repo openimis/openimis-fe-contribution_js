@@ -50,95 +50,131 @@ class ContributionMasterPanel extends FormPanel {
 
     let balance =
       Number(edited?.policy?.value) -
-      edited?.policy?.sumPremiums -
+      edited?.otherPremiums -
       (edited?.amount || 0);
       return (
-      <Fragment>
-        {!!edited && !!edited.policy && !!edited.policy.value && (
-          <Grid container className={classes.item}>
-            <Grid item xs={3} className={classes.item}>
-              <TextInput
-                module="contribution"
-                label="contribution.policy.name"
-                readOnly={true}
-                value={
-                  (edited.policy.product && edited.policy.product.name) || ""
-                }
-              />
-            </Grid>
-            <Grid item xs={3} className={classes.item}>
-              <AmountInput
-                module="contribution"
-                label="contribution.policy.value"
-                required
-                readOnly={true}
-                value={edited.policy.value || ""}
-              />
-            </Grid>
-            <Grid item xs={3} className={classes.item}>
-              <PublishedComponent
-                pubRef="core.DatePicker"
-                value={edited.policy.startDate || ""}
-                module="contribution"
-                label="contribution.policy.startDate"
-                readOnly={true}
-              />
-            </Grid>
-            <Grid item xs={3} className={classes.item}>
-              <PublishedComponent
-                pubRef="core.DatePicker"
-                value={edited.policy.expiryDate || ""}
-                module="contribution"
-                label="contribution.policy.expiryDate"
-                readOnly={true}
-              />
-            </Grid>
-          </Grid>
-        )}
         <Grid container className={classes.item}>
+          {!!edited && !!edited.policy && !!edited.policy.value && (
+            <>
+              <Grid item xs={3} className={classes.item}>
+                <TextInput
+                  module='contribution'
+                  label='contribution.policy.name'
+                  readOnly={true}
+                  value={
+                    (edited.policy.product && edited.policy.product.name) || ''
+                  }
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <AmountInput
+                  module='contribution'
+                  label='contribution.policy.value'
+                  required
+                  readOnly={true}
+                  value={edited.policy.value || ''}
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef='core.DatePicker'
+                  value={edited.policy.startDate || ''}
+                  module='contribution'
+                  label='contribution.policy.startDate'
+                  readOnly={true}
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef='core.DatePicker'
+                  value={edited.policy.expiryDate || ''}
+                  module='contribution'
+                  label='contribution.policy.expiryDate'
+                  readOnly={true}
+                />
+              </Grid>
+              {edited.policy?.family?.uuid && (
+                <>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.insuranceNo'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.chfId}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.lastName'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.lastName}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module='contribution'
+                      label='contribution.familySummaries.otherNames'
+                      readOnly={true}
+                      value={edited.policy.family?.headInsuree?.otherNames}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <PublishedComponent
+                      pubRef='core.DatePicker'
+                      value={edited.policy.family?.headInsuree?.dob}
+                      module='contribution'
+                      label='contribution.familySummaries.dob'
+                      readOnly={true}
+                    />
+                  </Grid>
+                </>
+              )}
+            </>
+          )}
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
-              pubRef="core.DatePicker"
-              value={!edited ? "" : edited.payDate}
-              module="contribution"
+              pubRef='core.DatePicker'
+              value={!edited ? '' : edited.payDate}
+              module='contribution'
               required
-              label="contribution.payDate"
+              label='contribution.payDate'
               readOnly={readOnly}
-              onChange={(c) => this.updateAttribute("payDate", c)}
+              onChange={(c) => this.updateAttribute('payDate', c)}
             />
           </Grid>
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
-              pubRef="payer.PayerPicker"
+              pubRef='payer.PayerPicker'
               withNull={true}
               readOnly={readOnly}
-              value={!edited ? "" : edited.payer}
-              onChange={(p) => this.updateAttribute("payer", p)}
+              value={!edited ? '' : edited.payer}
+              onChange={(p) => this.updateAttribute('payer', p)}
             />
           </Grid>
-
+  
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
-              pubRef="contribution.PremiumPaymentTypePicker"
+              pubRef='contribution.PremiumPaymentTypePicker'
               withNull={true}
               required
               readOnly={readOnly}
-              value={!edited ? "" : edited.payType}
-              onChange={(c) => this.updateAttribute("payType", c)}
+              value={!edited ? '' : edited.payType}
+              onChange={(c) => this.updateAttribute('payType', c)}
             />
           </Grid>
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
-              pubRef="contribution.PremiumCategoryPicker"
+              pubRef='contribution.PremiumCategoryPicker'
               withNull={false}
               readOnly={readOnly}
-              value={edited && edited.isPhotoFee ? "photoFee" : "contribution"}
+              value={edited && edited.isPhotoFee ? 'photoFee' : 'contribution'}
               onChange={(c) => {
-                return this.updateAttribute("isPhotoFee", c === "photoFee");
+                return this.updateAttribute('isPhotoFee', c === 'photoFee');
               }}
             />
           </Grid>
-
+  
           <Grid item xs={3} className={classes.item}>
             <ValidatedTextInput
               action={validateReceipt}
@@ -146,41 +182,41 @@ class ContributionMasterPanel extends FormPanel {
               setValidAction={setReceiptValid}
               codeTakenLabel={formatMessageWithValues(
                 intl,
-                "contribution",
-                "alreadyUsed",
+                'contribution',
+                'alreadyUsed',
                 { productCode }
               )}
               isValid={isReceiptValid}
               isValidating={isReceiptValidating}
-              itemQueryIdentifier="code"
-              label="contribution.receipt"
-              module="contribution"
-              onChange={(receipt) => this.updateAttribute("receipt", receipt)}
+              itemQueryIdentifier='code'
+              label='contribution.receipt'
+              module='contribution'
+              onChange={(receipt) => this.updateAttribute('receipt', receipt)}
               readOnly={readOnly}
               required={true}
               additionalQueryArgs={{ policyUuid: edited?.policy?.uuid }}
               shouldValidate={this.shouldValidate}
               validationError={receiptValidationError}
-              value={edited?.receipt ?? ""}
+              value={edited?.receipt ?? ''}
             />
           </Grid>
-
+  
           <Grid item xs={3} className={classes.item}>
             <AmountInput
-              module="contribution"
-              label="contribution.amount"
+              module='contribution'
+              label='contribution.amount'
               required
               readOnly={readOnly}
               value={edited?.amount || 0}
+              max={Number(edited.policy?.value)}
               displayZero={true}
-              onChange={(c) => this.updateAttribute("amount", c)}
+              onChange={(c) => this.updateAttribute('amount', c)}
             />
           </Grid>
-
           <Grid item xs={3} className={classes.item}>
             <AmountInput
-              module="policy"
-              label="Policy.sumPremiums"
+              module='policy'
+              label='Policy.sumPremiums'
               readOnly={true}
               value={edited?.policy?.sumPremiums || 0}
               displayZero={true}
@@ -188,17 +224,16 @@ class ContributionMasterPanel extends FormPanel {
           </Grid>
           <Grid item xs={3} className={classes.item}>
             <AmountInput
-              name="balance"
-              module="policy"
-              label="policies.balance"
+              name='balance'
+              module='policy'
+              label='policies.balance'
               readOnly={true}
               value={balance || 0}
               displayZero={true}
             />
           </Grid>
         </Grid>
-      </Fragment>
-    );
+      );
   }
 }
 

@@ -36,6 +36,16 @@ class ContributionMasterPanel extends FormPanel {
     return shouldValidate;
   };
 
+  calculateAmount = (maxInstallments, edited) => {
+    let amount;
+    if (maxInstallments===1){
+      amount = Number(edited.policy?.value);
+    }else{
+      amount = edited?.amount || 0;
+    }
+    return amount
+  };
+
   render() {
     const {
       intl,
@@ -48,6 +58,7 @@ class ContributionMasterPanel extends FormPanel {
     } = this.props;
     const productCode = edited?.policy?.product?.code;
 
+    const maxInstallments = edited?.policy?.product?.maxInstallments;
     let balance =
       Number(edited?.policy?.value) -
       edited?.otherPremiums -
@@ -205,8 +216,9 @@ class ContributionMasterPanel extends FormPanel {
               module='contribution'
               label='contribution.amount'
               required
-              readOnly={readOnly}
-              value={edited?.amount || 0}
+              readOnly={readOnly||(maxInstallments===1)}
+              // value={edited?.amount || 0}
+              value={this.calculateAmount(maxInstallments, edited)}
               max={Number(edited.policy?.value)}
               displayZero={true}
               onChange={(c) => this.updateAttribute('amount', c)}

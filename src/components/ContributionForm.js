@@ -137,6 +137,9 @@ class ContributionForm extends Component {
   canSave = () => {
     const { contribution } = this.state;
     const { isReceiptValid } = this.props;
+    const balance = Number(contribution?.policy?.value) - contribution?.otherPremiums - (contribution?.amount || 0);
+    if (balance < 0) return false;
+    if (contribution.policy?.product?.maxInstallments === 0) return false;
     if (
       !contribution ||
       (contribution &&

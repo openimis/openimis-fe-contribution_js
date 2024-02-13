@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 
@@ -45,12 +45,14 @@ class ContributionMasterPanel extends FormPanel {
       isReceiptValid,
       isReceiptValidating,
       receiptValidationError,
+      contributionTotalCount,
     } = this.props;
     const productCode = edited?.policy?.product?.code;
 
-    let balance =
+    const maxInstallments = edited?.policy?.product?.maxInstallments;
+    const balance =
       Number(edited?.policy?.value) -
-      edited?.otherPremiums -
+      edited?.policy?.otherPremiums -
       (edited?.amount || 0);
       return (
         <Grid container className={classes.item}>
@@ -173,7 +175,6 @@ class ContributionMasterPanel extends FormPanel {
               }}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <ValidatedTextInput
               action={validateReceipt}
@@ -199,15 +200,26 @@ class ContributionMasterPanel extends FormPanel {
               value={edited?.receipt ?? ''}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <AmountInput
               module='contribution'
               label='contribution.amount'
               required
-              readOnly={readOnly}
-              value={edited?.amount || 0}
-              max={Number(edited.policy?.value)}
+              readOnly={
+                readOnly ||
+                maxInstallments === 0 ||
+                maxInstallments === 1 ||
+                (maxInstallments > 1 &&
+                  contributionTotalCount === maxInstallments - 1)
+              }
+              value={edited.amount}
+              max={
+                !edited.id
+                  ? parseFloat(
+                      edited.policy?.value - edited.policy?.sumPremiums
+                    ).toFixed(2)
+                  : null
+              }
               displayZero={true}
               onChange={(c) => this.updateAttribute('amount', c)}
             />
@@ -244,6 +256,7 @@ const mapStateToProps = (store) => ({
   receiptValidationError:
     store.contribution?.validationFields?.contributionReceipt.validationError,
   savedCode: store.contribution.contribution?.receipt,
+  contributionTotalCount: store.contribution.policiesPremiumsPageInfo?.totalCount ?? 0,
 });
 
 export default withModulesManager(

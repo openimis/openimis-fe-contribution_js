@@ -81,7 +81,7 @@ class ContributionForm extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (!prevProps.fetchedContribution && !!this.props.fetchedContribution) {
       const { contribution } = this.props;
       this.setState({
@@ -119,6 +119,58 @@ class ContributionForm extends Component {
         },
       }));
     }
+
+    if (
+      prevState.contribution !== this.state.contribution
+    ) {
+      const { contribution } = this.state;
+      const maxInstallments = contribution?.policy?.product?.maxInstallments;
+
+      if (maxInstallments === 0 && contribution.amount !== 0) {
+        this.setState((prevState) => ({
+          contribution: {
+            ...prevState.contribution,
+            amount: 0,
+          },
+        }));
+      }
+
+      if (
+        maxInstallments === 1 &&
+        contribution.amount !== contribution.policy?.value
+      ) {
+        this.setState((prevState) => ({
+          contribution: {
+            ...prevState.contribution,
+            amount: contribution.policy?.value,
+          },
+        }));
+      }
+
+      if (
+        maxInstallments > 1 &&
+        (prevState.contribution.policy?.uuid !== contribution.policy?.uuid ||
+          prevState.contribution.policy.product?.maxInstallments !==
+            maxInstallments)
+      ) {
+        const { modulesManager, fetchPoliciesPremiums } = this.props;
+        fetchPoliciesPremiums(modulesManager, [
+          `policyUuids: ["${contribution.policy.uuid}"]`,
+        ]).then((res) => {
+          const { totalCount } = res.payload.data.premiumsByPolicies;
+
+          if (totalCount === maxInstallments - 1) {
+            const amount = contribution.policy?.value - contribution.policy?.sumPremiums;
+            this.setState((prevState) => ({
+              contribution: {
+                ...prevState.contribution,
+                amount: parseFloat(amount.toFixed(2)),
+              },
+            }));
+          }
+        });
+      }
+    }
   }
 
   componentWillUnmount = () => {
@@ -137,16 +189,20 @@ class ContributionForm extends Component {
   canSave = () => {
     const { contribution } = this.state;
     const { isReceiptValid } = this.props;
-    const balance = Number(contribution?.policy?.value) - contribution?.otherPremiums - (contribution?.amount || 0);
-    if (balance < 0) return false;
-    if (contribution.policy?.product?.maxInstallments === 0) return false;
+    if (
+      contribution?.policy?.product?.maxInstallments === 0 ||
+      contribution.amount >
+        Number(contribution.policy?.value) - contribution.policy?.sumPremiums ||
+      (contribution?.id && contribution?.policy?.product?.maxInstallments === 1)
+    )
+      return false;
+
     if (
       !contribution ||
       (contribution &&
         (!contribution.payDate ||
           !contribution.payType ||
           !contribution.amount ||
-          contribution.amount > contribution.policy.value || 
           !contribution.receipt ||
           !contribution.policy ||
           contribution.validityTo ||
@@ -219,9 +275,9 @@ class ContributionForm extends Component {
       save,
       back,
     } = this.props;
-
     const { contribution, saveContribution, newContribution, reset, update } =
-      this.state;
+    this.state;
+    
     if (!rights.includes(RIGHT_CONTRIBUTION)) return null;
     let runningMutation = !!contribution && !!contribution.clientMutationId;
     let contributedMutations = modulesManager.getContribs(

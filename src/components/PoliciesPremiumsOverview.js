@@ -2,21 +2,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
+import _ from "lodash";
+
+import { Paper, IconButton, Grid, Divider, Typography, Tooltip } from "@material-ui/core";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
-import _ from "lodash";
-import { Paper, IconButton, Grid, Divider, Typography, Tooltip } from "@material-ui/core";
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle
-} from '@material-ui/core';
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
 } from '@material-ui/icons';
+
 import {
     formatMessage,
     formatMessageWithValues,
@@ -31,8 +26,7 @@ import {
     PagedDataHandler,
     journalize,
     historyPush,
-    FormattedMessage,
-    SelectDialog,
+    coreAlert,
 } from "@openimis/fe-core";
 import {
     fetchPoliciesPremiums,
@@ -40,12 +34,11 @@ import {
     deleteContribution,
     fetchPolicySummary
 } from "../actions";
-import DeleteContributionDialog from "./DeleteContributionDialog";
-
 import {
     RIGHT_CONTRIBUTION_DELETE,
     RIGHT_CONTRIBUTION_ADD,
 } from "../constants";
+import DeleteContributionDialog from "./DeleteContributionDialog";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -70,7 +63,6 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         this.setState({
             orderBy: "-payDate",
             deleteContribution: null,
-            openDialog: false,
         }, e => this.query())
     }
 
@@ -81,12 +73,21 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
             history,
             pageInfo,
             policySummary,
+            coreAlert,
         } = this.props;
         if (policySummary?.product?.maxInstallments <= pageInfo?.totalCount) {
-            this.setState(state => ({
-                ...state,
-                openDialog: true
-            }));
+            coreAlert(
+              formatMessage(
+                this.props.intl,
+                'contribution',
+                'addContributionDialog.maxINstallments.title'
+              ),
+              formatMessage(
+                this.props.intl,
+                'contribution',
+                'addContributionDialog.maxINstallments.message'
+              )
+            );
         }
         else
             historyPush(modulesManager, history, "contribution.contributionNew", [policy.policyUuid]);
@@ -233,20 +234,6 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     rowDisabled = (i) => !!i && !!i.validityTo
     rowLocked = (i) => !!i && !!i.clientMutationId
 
-    actionDialogOpen = () => {
-        this.setState(state => ({
-            ...state,
-            openDialog: true
-        }));
-    }
-
-    actionDialogClose = () => {
-        this.setState(state => ({
-            ...state,
-            openDialog: false
-        }));
-    }
-
     render() {
         const {
             intl,
@@ -280,16 +267,6 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         }
         return (
             <>
-                <SelectDialog
-                    confirmState={this?.state?.openDialog}
-                    onConfirm={this.addNewPremium}
-                    onClose={this.actionDialogClose}
-                    module="contribution"
-                    confirmTitle="addContributionDialog.maxINstallments.title"
-                    confirmMessage="addContributionDialog.maxINstallments.message"
-                    confirmationButton="contribution.saveContributionDialog.yes.button"
-                    rejectionButton="contribution.saveContributionDialog.no.button"
-                />
                 <DeleteContributionDialog
                     contribution={this.state.deleteContribution}
                     onConfirm={this.deleteContribution}
@@ -367,6 +344,7 @@ const mapDispatchToProps = dispatch => {
         deleteContribution,
         fetchPolicySummary,
         journalize,
+        coreAlert,
     }, dispatch);
 };
 

@@ -192,7 +192,7 @@ class ContributionForm extends Component {
     if (
       contribution?.policy?.product?.maxInstallments === 0 ||
       contribution.amount >
-        Number(contribution.policy?.value) - contribution.policy?.sumPremiums ||
+        Number(contribution.policy?.value - contribution.policy?.sumPremiums) ||
       (contribution?.id && contribution?.policy?.product?.maxInstallments === 1)
     )
       return false;

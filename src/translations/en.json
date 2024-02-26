@@ -74,5 +74,7 @@
     "contribution.familySummaries.insuranceNo": "Head Ins. No.",
     "contribution.familySummaries.lastName": "Head Last Name",
     "contribution.familySummaries.otherNames": "Head Given Name",
-    "contribution.familySummaries.dob": "Head Birth Date"
+    "contribution.familySummaries.dob": "Head Birth Date",
+    "contribution.warning.header": "WARNING",
+    "contribution.warning.paid.description": "The policy is already paid."
 }

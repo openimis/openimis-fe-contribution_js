@@ -13,7 +13,9 @@ import {
   ValidatedTextInput,
   PublishedComponent,
   formatMessageWithValues,
+  formatMessage,
   FormPanel,
+  WarningBox,
 } from "@openimis/fe-core";
 import {
   validateReceipt,
@@ -34,6 +36,30 @@ class ContributionMasterPanel extends FormPanel {
     const { savedCode } = this.props;
     const shouldValidate = inputValue !== savedCode;
     return shouldValidate;
+  };
+
+  renderWarning = () => {
+    const { intl, edited } = this.props;
+
+    if (edited.id) {
+      return null;
+    }
+
+    if (Number(edited.policy.value) - edited.policy.sumPremiums === 0) {
+      return (
+        <WarningBox
+          title={formatMessage(intl, 'contribution', 'warning.header')}
+          description={formatMessage(
+            intl,
+            'contribution',
+            'warning.paid.description'
+          )}
+          xs={12}
+        />
+      );
+    }
+
+    return null;
   };
 
   render() {
@@ -58,6 +84,7 @@ class ContributionMasterPanel extends FormPanel {
         <Grid container className={classes.item}>
           {!!edited && !!edited.policy && !!edited.policy.value && (
             <>
+              {this.renderWarning()}
               <Grid item xs={3} className={classes.item}>
                 <TextInput
                   module='contribution'
@@ -209,12 +236,15 @@ class ContributionMasterPanel extends FormPanel {
                 readOnly ||
                 maxInstallments === 0 ||
                 maxInstallments === 1 ||
-                (maxInstallments > 1 &&
+                (!edited.id &&
+                  maxInstallments > 1 &&
                   contributionTotalCount === maxInstallments - 1)
               }
               value={edited.amount}
               max={
-                !edited.id
+                !edited.id &&
+                edited?.amount >
+                  edited.policy?.value - edited.policy?.sumPremiums
                   ? parseFloat(
                       edited.policy?.value - edited.policy?.sumPremiums
                     ).toFixed(2)

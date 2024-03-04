@@ -27,6 +27,8 @@ const SaveContributionDialog = ({
     const amount = parseInt(contribution.amount, 10) + sumPremiums;
     const policyValue = parseInt(contribution.policy.value, 10);
     const max_installments = contribution?.policy?.product?.maxInstallments;
+
+    console.log(installmentsNumber, max_installments)
     return (
         <Dialog
             open={!!contribution}
@@ -78,7 +80,7 @@ const SaveContributionDialog = ({
                     )
                 }
                 {
-                    installmentsNumber >= max_installments && (
+                    installmentsNumber >= max_installments && !max_installments === null && (
                         <DialogContentText>
                             <FormattedMessage
                                 module="contribution"

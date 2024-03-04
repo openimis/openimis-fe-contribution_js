@@ -68,30 +68,52 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
 
     checkNewPremium = () => {
         const {
-            policy,
-            modulesManager,
-            history,
-            pageInfo,
-            policySummary,
-            coreAlert,
+          policy,
+          modulesManager,
+          history,
+          pageInfo,
+          policySummary,
+          coreAlert,
+          intl,
         } = this.props;
-        if (policySummary?.product?.maxInstallments <= pageInfo?.totalCount) {
-            coreAlert(
-              formatMessage(
-                this.props.intl,
-                'contribution',
-                'addContributionDialog.maxINstallments.title'
-              ),
-              formatMessage(
-                this.props.intl,
-                'contribution',
-                'addContributionDialog.maxINstallments.message'
-              )
-            );
-        }
-        else
-            historyPush(modulesManager, history, "contribution.contributionNew", [policy.policyUuid]);
-    }
+    
+        const maxInstallments = policySummary?.product?.maxInstallments;
+    
+        // NOTE: 0 - no installments allowed, null - no limit
+        if (maxInstallments === 0) {
+          coreAlert(
+            formatMessage(
+              intl,
+              'contribution',
+              'addContributionDialog.maxINstallments.title'
+            ),
+            formatMessage(
+              intl,
+              'contribution',
+              'addContributionDialog.noInstallmentsAllowed.message'
+            )
+          );
+        } else if (
+          !maxInstallments === null &&
+          maxInstallments <= pageInfo?.totalCount
+        ) {
+          coreAlert(
+            formatMessage(
+              intl,
+              'contribution',
+              'addContributionDialog.maxINstallments.title'
+            ),
+            formatMessage(
+              intl,
+              'contribution',
+              'addContributionDialog.maxINstallments.message'
+            )
+          );
+        } else
+          historyPush(modulesManager, history, 'contribution.contributionNew', [
+            policy.policyUuid,
+          ]);
+      };
 
     addNewPremium = () => {
         const {

@@ -28,7 +28,6 @@ const SaveContributionDialog = ({
     const policyValue = parseInt(contribution.policy.value, 10);
     const max_installments = contribution?.policy?.product?.maxInstallments;
 
-    console.log(installmentsNumber, max_installments)
     return (
         <Dialog
             open={!!contribution}

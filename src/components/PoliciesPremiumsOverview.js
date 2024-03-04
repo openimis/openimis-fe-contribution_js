@@ -94,7 +94,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
             )
           );
         } else if (
-          !maxInstallments == null &&
+          maxInstallments !== null &&
           maxInstallments <= pageInfo?.totalCount
         ) {
           coreAlert(

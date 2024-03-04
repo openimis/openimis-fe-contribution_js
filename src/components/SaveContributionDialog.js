@@ -79,7 +79,7 @@ const SaveContributionDialog = ({
                     )
                 }
                 {
-                    installmentsNumber >= max_installments && !max_installments == null && (
+                    installmentsNumber >= max_installments && max_installments !== null && (
                         <DialogContentText>
                             <FormattedMessage
                                 module="contribution"

@@ -135,7 +135,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
             `orderBy: "${orderBy}"`,
             `policyUuids: ${JSON.stringify([policy.policyUuid])}`,
           ];
-        } else if (policies && policies.length) {
+        } else if (policies?.length) {
           const policiesUuids = JSON.stringify(
             policies.map((policy) => policy.policyUuid)
           );

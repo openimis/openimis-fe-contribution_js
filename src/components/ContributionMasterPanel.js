@@ -45,6 +45,22 @@ class ContributionMasterPanel extends FormPanel {
       return null;
     }
 
+    if (
+      edited.amount > Number(edited.policy?.value - edited.policy?.sumPremiums)
+    ) {
+      return (
+        <WarningBox
+          title={formatMessage(intl, 'contribution', 'warning.header')}
+          description={formatMessage(
+            intl,
+            'contribution',
+            'warning.paid.exceedsPolicyValue'
+          )}
+          xs={12}
+        />
+      );
+    }
+
     if (Number(edited.policy.value) - edited.policy.sumPremiums === 0) {
       return (
         <WarningBox

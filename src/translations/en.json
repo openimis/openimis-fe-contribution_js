@@ -45,6 +45,7 @@
     "contribution.saveContributionDialog.messageHigher": "The contribution is higher than the value of the policy",
     "contribution.addContributionDialog.maxINstallments.title": "Limit of Installments Reached",
     "contribution.addContributionDialog.maxINstallments.message": "You've reached the limit of maximum installments for this plan. You can't add more contributions.",
+    "contribution.addContributionDialog.noInstallmentsAllowed.message": "No installments are allowed for this plan. You can't add any contributions.",
     "contribution.saveContributionDialog.ok.button": "OK",
     "contribution.saveContributionDialog.yes.button": "Yes",
     "contribution.saveContributionDialog.no.button": "No",
@@ -76,5 +77,6 @@
     "contribution.familySummaries.otherNames": "Head Given Name",
     "contribution.familySummaries.dob": "Head Birth Date",
     "contribution.warning.header": "WARNING",
-    "contribution.warning.paid.description": "The policy is already paid."
+    "contribution.warning.paid.description": "The policy is already paid.",
+    "contribution.warning.paid.exceedsPolicyValue": "Sum of contributions exceeds policy value. Saving not allowed."
 }

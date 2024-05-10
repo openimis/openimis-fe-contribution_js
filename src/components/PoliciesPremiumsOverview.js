@@ -205,7 +205,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
             rights, 
             fetchingPoliciesPremiums,
         } = this.props;
-        if (!family.uuid ||(!!family.headInsuree && family.headInsuree.marital === 'P')) return null;
+        if (!family.uuid ||(!!family.familyType && family.familyType.code == 'P')) return null;
         const canAdd = rights.includes(RIGHT_CONTRIBUTION_ADD);
         let actions = [
             {

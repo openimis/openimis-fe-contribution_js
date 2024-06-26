@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 
@@ -13,7 +13,9 @@ import {
   ValidatedTextInput,
   PublishedComponent,
   formatMessageWithValues,
+  formatMessage,
   FormPanel,
+  WarningBox,
 } from "@openimis/fe-core";
 import {
   validateReceipt,
@@ -36,6 +38,46 @@ class ContributionMasterPanel extends FormPanel {
     return shouldValidate;
   };
 
+  renderWarning = () => {
+    const { intl, edited } = this.props;
+
+    if (edited.id) {
+      return null;
+    }
+
+    if (
+      edited.amount > Number(edited.policy?.value - edited.policy?.sumPremiums)
+    ) {
+      return (
+        <WarningBox
+          title={formatMessage(intl, 'contribution', 'warning.header')}
+          description={formatMessage(
+            intl,
+            'contribution',
+            'warning.paid.exceedsPolicyValue'
+          )}
+          xs={12}
+        />
+      );
+    }
+
+    if (Number(edited.policy.value) - edited.policy.sumPremiums === 0) {
+      return (
+        <WarningBox
+          title={formatMessage(intl, 'contribution', 'warning.header')}
+          description={formatMessage(
+            intl,
+            'contribution',
+            'warning.paid.description'
+          )}
+          xs={12}
+        />
+      );
+    }
+
+    return null;
+  };
+
   render() {
     const {
       intl,
@@ -45,17 +87,20 @@ class ContributionMasterPanel extends FormPanel {
       isReceiptValid,
       isReceiptValidating,
       receiptValidationError,
+      contributionTotalCount,
     } = this.props;
     const productCode = edited?.policy?.product?.code;
 
-    let balance =
+    const maxInstallments = edited?.policy?.product?.maxInstallments;
+    const balance =
       Number(edited?.policy?.value) -
-      edited?.otherPremiums -
+      edited?.policy?.otherPremiums -
       (edited?.amount || 0);
       return (
         <Grid container className={classes.item}>
           {!!edited && !!edited.policy && !!edited.policy.value && (
             <>
+              {this.renderWarning()}
               <Grid item xs={3} className={classes.item}>
                 <TextInput
                   module='contribution'
@@ -152,11 +197,10 @@ class ContributionMasterPanel extends FormPanel {
               onChange={(p) => this.updateAttribute('payer', p)}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <PublishedComponent
               pubRef='contribution.PremiumPaymentTypePicker'
-              withNull={true}
+              withNull={false}
               required
               readOnly={readOnly}
               value={!edited ? '' : edited.payType}
@@ -174,7 +218,6 @@ class ContributionMasterPanel extends FormPanel {
               }}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <ValidatedTextInput
               action={validateReceipt}
@@ -200,15 +243,29 @@ class ContributionMasterPanel extends FormPanel {
               value={edited?.receipt ?? ''}
             />
           </Grid>
-  
           <Grid item xs={3} className={classes.item}>
             <AmountInput
               module='contribution'
               label='contribution.amount'
               required
-              readOnly={readOnly}
-              value={edited?.amount || 0}
-              max={Number(edited.policy?.value)}
+              readOnly={
+                readOnly ||
+                maxInstallments === 0 ||
+                maxInstallments === 1 ||
+                (!edited.id &&
+                  maxInstallments > 1 &&
+                  contributionTotalCount === maxInstallments - 1)
+              }
+              value={edited.amount}
+              max={
+                !edited.id &&
+                edited?.amount >
+                  edited.policy?.value - edited.policy?.sumPremiums
+                  ? parseFloat(
+                      edited.policy?.value - edited.policy?.sumPremiums
+                    ).toFixed(2)
+                  : null
+              }
               displayZero={true}
               onChange={(c) => this.updateAttribute('amount', c)}
             />
@@ -245,6 +302,7 @@ const mapStateToProps = (store) => ({
   receiptValidationError:
     store.contribution?.validationFields?.contributionReceipt.validationError,
   savedCode: store.contribution.contribution?.receipt,
+  contributionTotalCount: store.contribution.policiesPremiumsPageInfo?.totalCount ?? 0,
 });
 
 export default withModulesManager(

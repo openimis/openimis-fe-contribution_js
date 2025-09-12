@@ -204,6 +204,7 @@ class ContributionForm extends Component {
                 <ProgressOrError progress={fetchingContribution} error={errorContribution} />
                 {((!!fetchedContribution && !!contribution && contribution.uuid === contribution_uuid) || !contribution_uuid) && (
                     <Form
+                        hideSaveButton={overview}
                         module="contribution"
                         title={!!newContribution ? "ContributionOverview.newTitle" : "ContributionOverview.title"}
                         edited_id={contribution_uuid}

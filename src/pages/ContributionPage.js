@@ -43,12 +43,13 @@ class ContributionPage extends Component {
     }
 
     render() {
-        const { classes, rights, contribution_uuid,policy_uuid, overview } = this.props;
+        const { classes, rights, contribution_uuid,policy_uuid, overview, readOnly } = this.props;
         if (!rights.includes(RIGHT_CONTRIBUTION_EDIT)) return null;
 
         return (
             <div className={classes.page}>
                 <ContributionForm
+                    readOnly={readOnly}
                     overview={overview}
                     contribution_uuid={contribution_uuid}
                     policy_uuid={policy_uuid}

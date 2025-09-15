@@ -53,16 +53,12 @@ class ContributionSearcher extends Component {
         let prms = Object.keys(state.filters)
             .filter(contrib => !!state.filters[contrib]['filter'])
             .map(contrib => state.filters[contrib]['filter']);
-        if (!state.beforeCursor && !state.afterCursor) {
-            prms.push(`first: ${state.pageSize}`);
-        }
+        prms.push(`first: ${state.pageSize}`);
         if (!!state.afterCursor) {
             prms.push(`after: "${state.afterCursor}"`)
-            prms.push(`first: ${state.pageSize}`);
         }
         if (!!state.beforeCursor) {
             prms.push(`before: "${state.beforeCursor}"`)
-            prms.push(`last: ${state.pageSize}`);
         }
         if (!!state.orderBy) {
             prms.push(`orderBy: ["${state.orderBy}"]`);
@@ -121,7 +117,7 @@ class ContributionSearcher extends Component {
         const formatters =  [
             c => formatDateFromISO(this.props.modulesManager, this.props.intl, c.payDate),
             c => c.payer?.name ?? "",
-            c => formatAmount(this.props.modulesManager, this.props.intl, c.amount),
+            c => formatAmount(this.props.intl, c.amount),
             c => <PublishedComponent
                 readOnly={true}
                 pubRef="contribution.PremiumPaymentTypePicker" withLabel={false} value={c.payType}

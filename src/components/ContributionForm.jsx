@@ -199,7 +199,9 @@ class ContributionForm extends Component {
           !contribution.policy ||
           contribution.validityTo ||
           (contribution.policy && !contribution.policy.uuid) ||
-          !isReceiptValid))
+          !isReceiptValid
+        )
+      )
     )
       return false;
     return true;
@@ -315,6 +317,7 @@ class ContributionForm extends Component {
           contribution.uuid === contribution_uuid) ||
           !contribution_uuid) && (
           <Form
+            hideSaveButton={overview}
             module="contribution"
             title={
               !!newContribution

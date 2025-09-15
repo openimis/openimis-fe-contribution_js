@@ -43,7 +43,7 @@ class ContributionPage extends Component {
     }
 
     render() {
-        const { rights, contribution_uuid,policy_uuid, overview } = this.props;
+        const { rights, contribution_uuid,policy_uuid, overview} = this.props;
         if (!rights.includes(RIGHT_CONTRIBUTION_EDIT)) return null;
 
         return (

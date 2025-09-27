@@ -3,7 +3,7 @@ import React, { Component, Fragment } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
-import {  IconButton, Tooltip } from "@material-ui/core";
+import { Button, Tooltip } from "@material-ui/core";
 import {
    Tab as TabIcon, Delete as DeleteIcon
 } from '@material-ui/icons';
@@ -110,7 +110,9 @@ class ContributionSearcher extends Component {
     deletePremiumAction = (i) =>
         !!i.validityTo || !!i.clientMutationId ? null :
             <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
-                <IconButton onClick={() => this.confirmDelete(i)}><DeleteIcon /></IconButton>
+                <Button startIcon={<DeleteIcon />} onClick={() => this.confirmDelete(i)}>
+                    {formatMessage(this.props.intl, "contribution", "deletePremium.buttonText")}
+                </Button>
             </Tooltip>
 
     itemFormatters = () => {
@@ -127,7 +129,9 @@ class ContributionSearcher extends Component {
 
             c => (
                 <Tooltip title={formatMessage(this.props.intl, "contribution", "contribution.openNewTab")}>
-                    <IconButton onClick={e => this.props.onDoubleClick(c, true)} > <TabIcon /></IconButton >
+                    <Button startIcon={<TabIcon />} onClick={e => this.props.onDoubleClick(c, true)}>
+                        {formatMessage(this.props.intl, "contribution", "contribution.openNewTab.buttonText")}
+                    </Button>
                 </Tooltip>
             )
         ];

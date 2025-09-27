@@ -4,8 +4,9 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import ReplayIcon from "@material-ui/icons/Replay"
+import Button from "@material-ui/core/Button";
 import _ from "lodash";
-import { Paper, IconButton, Grid, Divider, Typography, Tooltip} from "@material-ui/core";
+import { Paper, Grid, Divider, Typography, Tooltip} from "@material-ui/core";
 import {
     Add as AddIcon,
     Delete as DeleteIcon,
@@ -130,7 +131,9 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
     deletePremiumAction = (i) =>
         !!i.validityTo || !!i.clientMutationId ? null :
             <Tooltip title={formatMessage(this.props.intl, "contribution", "deletePremium.tooltip")}>
-                <IconButton onClick={() => this.confirmDelete(i)}><DeleteIcon /></IconButton>
+                <Button startIcon={<DeleteIcon />} onClick={() => this.confirmDelete(i)}>
+                    {formatMessage(this.props.intl, "contribution", "deletePremium.buttonText")}
+                </Button>
             </Tooltip>
 
     itemFormatters = () => {
@@ -209,14 +212,17 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
         const canAdd = rights.includes(RIGHT_CONTRIBUTION_ADD);
         let actions = [
             {
-                button: <IconButton onClick={this.query}><ReplayIcon /></IconButton>,
+                button: <Button startIcon={<ReplayIcon />} onClick={this.query}>{formatMessage(intl, "contribution", "reload.buttonText")}</Button>,
                 tooltip: formatMessage(intl, "contribution", "reload.tooltip")
             }
         ];
         if (!!!readOnly && canAdd) {
             actions.push(
                 {
-                    button: <IconButton className={!policy ? classes.disabled : ""} onClick={!policy ? null : this.addNewPremium}><AddIcon /></IconButton>,
+                    button: <Button startIcon={<AddIcon />} className={!policy ? classes.disabled : ""} 
+                        onClick={!policy ? null : this.addNewPremium}>
+                        {formatMessage(intl, "contribution", "addNewPremium.buttonText")}
+                    </Button>,
                     tooltip: !policy ?
                         formatMessage(intl, "contribution", "addNewPremium.tooltip.selectPolicy") :
                         formatMessage(intl, "contribution", "addNewPremium.tooltip")

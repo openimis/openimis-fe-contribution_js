@@ -102,10 +102,11 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION + "/:policy_uuid", component: ContributionPage, rights: [RIGHT_CONTRIBUTION], icon: "MonetizationOn" },
     { path: ROUTE_CONTRIBUTION_CONTRIBUTION_OVERVIEW + "/:contribution_uuid", component: ContributionOverviewPage, rights: [RIGHT_CONTRIBUTION], icon: "MonetizationOn" },
   ],
-  "insuree.MainMenu": [
+  "insuree.MainMenu": (modulesManager) => [
     {
-      route:  ROUTE_CONTRIBUTION_CONTRIBUTIONS,
-    }
+      route: ROUTE_CONTRIBUTION_CONTRIBUTIONS,
+      hide: modulesManager.getConf("fe-policy", "enableInvoicePaymentMode", false),
+    },
   ],
   "insuree.FamilyOverview.panels": [PoliciesPremiumsOverview],
 }

@@ -29,6 +29,7 @@ import {
   fetchPoliciesPremiums,
 } from "../actions";
 import { INSUREE_FAMILY_ROUTE_REF, RIGHT_CONTRIBUTION } from "../constants";
+import { policyRemainingValue } from "../utils";
 import ContributionMasterPanel from "./ContributionMasterPanel";
 import SaveContributionDialog from "./SaveContributionDialog";
 
@@ -182,10 +183,11 @@ class ContributionForm extends Component {
   canSave = () => {
     const { contribution } = this.state;
     const { isReceiptValid } = this.props;
+    // a policy with no value has an unknown remaining amount - don't treat it as 0
+    const remaining = policyRemainingValue(contribution?.policy);
     if (
       contribution?.policy?.product?.maxInstallments === 0 ||
-      contribution.amount >
-        Number(contribution.policy?.value - contribution.policy?.sumPremiums) ||
+      (remaining !== null && contribution.amount > remaining) ||
       (contribution?.id && contribution?.policy?.product?.maxInstallments === 1)
     )
       return false;

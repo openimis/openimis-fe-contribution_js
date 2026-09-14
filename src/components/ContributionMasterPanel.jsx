@@ -24,6 +24,7 @@ import {
   clearReceiptValidation,
   setReceiptValid,
 } from "../actions";
+import { policyRemainingValue } from "../utils";
 
 const StyledGrid = styled(Grid)(({ theme }) => ({
   '& .tableTitle': theme?.table?.title ?? {},
@@ -47,9 +48,9 @@ class ContributionMasterPanel extends FormPanel {
       return null;
     }
 
-    if (
-      edited.amount > Number(edited.policy?.value - edited.policy?.sumPremiums)
-    ) {
+    const remaining = policyRemainingValue(edited.policy);
+
+    if (remaining !== null && edited.amount > remaining) {
       return (
         <WarningBox
           title={formatMessage(intl, 'contribution', 'warning.header')}
@@ -63,7 +64,7 @@ class ContributionMasterPanel extends FormPanel {
       );
     }
 
-    if (Number(edited.policy.value) - edited.policy.sumPremiums === 0) {
+    if (remaining === 0) {
       return (
         <WarningBox
           title={formatMessage(intl, 'contribution', 'warning.header')}
@@ -93,10 +94,9 @@ class ContributionMasterPanel extends FormPanel {
     const productCode = edited?.policy?.product?.code;
 
     const maxInstallments = edited?.policy?.product?.maxInstallments;
+    const remainingValue = policyRemainingValue(edited?.policy);
     const balance =
-      Number(edited?.policy?.value) -
-      edited?.policy?.otherPremiums -
-      (edited?.amount || 0);
+      remainingValue === null ? null : remainingValue - (edited?.amount || 0);
       return (
         <StyledGrid container className="item" spacing={2}>
           {!!edited && !!edited.policy && !!edited.policy.value && (
@@ -204,11 +204,10 @@ class ContributionMasterPanel extends FormPanel {
           <Grid size={GRID_RESPONSIVE_STANDARD} className="item">
             <PublishedComponent
               pubRef='payer.PayerPicker'
-              withNull={false}
+              withNull
               value={edited?.payer}
               module='contribution'
               label='contribution.payer'
-              required
               readOnly={readOnly}
               onChange={(payer) => this.updateAttribute('payer', payer)}
             />
@@ -253,13 +252,7 @@ class ContributionMasterPanel extends FormPanel {
               }
               value={edited.amount}
               max={
-                !edited.id &&
-                edited?.amount >
-                  edited.policy?.value - edited.policy?.sumPremiums
-                  ? parseFloat(
-                      edited.policy?.value - edited.policy?.sumPremiums
-                    ).toFixed(2)
-                  : null
+                !edited.id && remainingValue !== null ? remainingValue : null
               }
               displayZero={true}
               onChange={(c) => this.updateAttribute('amount', c)}

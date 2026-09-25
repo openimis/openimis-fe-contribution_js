@@ -25,4 +25,4 @@ yarn.lock
 
 .vscode/launch.json
 
-package-lock.json
+coverage

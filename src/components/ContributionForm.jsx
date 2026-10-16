@@ -105,13 +105,6 @@ class ContributionForm extends Component {
         saveContribution: false,
       }));
     }
-    if (
-      prevProps.confirmed !== this.props.confirmed &&
-      !!this.props.confirmed &&
-      !!this.state.confirmedAction
-    ) {
-      this.state.confirmedAction();
-    }
     if (!prevProps.policySummary && !!this.props.policySummary) {
       this.setState((prevState) => ({
         contribution: {
@@ -228,8 +221,9 @@ class ContributionForm extends Component {
     this.setState({ contribution, newContribution: false });
   };
 
-  onActionToConfirm = (title, message, confirmedAction) => {
-    this.setState({ confirmedAction }, this.props.coreConfirm(title, message));
+  onActionToConfirm = (title, message, onConfirm) => {
+    // The action goes with the question, so only this caller is answered (OP-3190).
+    this.props.coreConfirm(title, message, { onConfirm });
   };
 
   _cancelSave() {

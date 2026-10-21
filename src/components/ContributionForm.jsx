@@ -357,7 +357,6 @@ const mapStateToProps = (state, props) => ({
   policySummary: state.contribution.policySummary,
   mutation: state.contribution.mutation,
   contribution: state.contribution.contribution,
-  confirmed: state.core.confirmed,
   state: state,
   isReceiptValid:
     state.contribution?.validationFields?.contributionReceipt.isValid,

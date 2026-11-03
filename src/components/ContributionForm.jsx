@@ -29,6 +29,7 @@ import {
   fetchPoliciesPremiums,
 } from "../actions";
 import { INSUREE_FAMILY_ROUTE_REF, RIGHT_CONTRIBUTION } from "../constants";
+import { policyRemainingValue } from "../utils";
 import ContributionMasterPanel from "./ContributionMasterPanel";
 import SaveContributionDialog from "./SaveContributionDialog";
 
@@ -104,13 +105,6 @@ class ContributionForm extends Component {
         saveContribution: false,
       }));
     }
-    if (
-      prevProps.confirmed !== this.props.confirmed &&
-      !!this.props.confirmed &&
-      !!this.state.confirmedAction
-    ) {
-      this.state.confirmedAction();
-    }
     if (!prevProps.policySummary && !!this.props.policySummary) {
       this.setState((prevState) => ({
         contribution: {
@@ -182,10 +176,11 @@ class ContributionForm extends Component {
   canSave = () => {
     const { contribution } = this.state;
     const { isReceiptValid } = this.props;
+    // a policy with no value has an unknown remaining amount - don't treat it as 0
+    const remaining = policyRemainingValue(contribution?.policy);
     if (
       contribution?.policy?.product?.maxInstallments === 0 ||
-      contribution.amount >
-        Number(contribution.policy?.value - contribution.policy?.sumPremiums) ||
+      (remaining !== null && contribution.amount > remaining) ||
       (contribution?.id && contribution?.policy?.product?.maxInstallments === 1)
     )
       return false;
@@ -226,8 +221,9 @@ class ContributionForm extends Component {
     this.setState({ contribution, newContribution: false });
   };
 
-  onActionToConfirm = (title, message, confirmedAction) => {
-    this.setState({ confirmedAction }, this.props.coreConfirm(title, message));
+  onActionToConfirm = (title, message, onConfirm) => {
+    // The action goes with the question, so only this caller is answered (OP-3190).
+    this.props.coreConfirm(title, message, { onConfirm });
   };
 
   _cancelSave() {
@@ -361,7 +357,6 @@ const mapStateToProps = (state, props) => ({
   policySummary: state.contribution.policySummary,
   mutation: state.contribution.mutation,
   contribution: state.contribution.contribution,
-  confirmed: state.core.confirmed,
   state: state,
   isReceiptValid:
     state.contribution?.validationFields?.contributionReceipt.isValid,

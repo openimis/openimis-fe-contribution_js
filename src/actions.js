@@ -115,7 +115,10 @@ export function fetchPolicySummary(mm, policyUuid) {
   if (!!policyUuid) {
     filters.push(`uuid: "${policyUuid}"`);
   }
-  const payload = formatPageQuery("policies", filters, [
+  // the family summary block of ContributionMasterPanel needs the policy's family,
+  // so reuse the policy picker projection that carries it (falling back to a local
+  // copy so the module still works without fe-policy)
+  const projections = mm.getRef("policy.PolicyPicker.projection.withFamily") ?? [
     "id",
     "uuid",
     "startDate",
@@ -123,7 +126,9 @@ export function fetchPolicySummary(mm, policyUuid) {
     "expiryDate",
     "value",
     "sumPremiums",
-  ]);
+    "family{id, uuid, headInsuree{chfId, lastName, otherNames, dob}}",
+  ];
+  const payload = formatPageQuery("policies", filters, projections);
   return graphql(payload, "CONTRIBUTION_POLICY_SUMMARY");
 }
 

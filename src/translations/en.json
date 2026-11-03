@@ -1,5 +1,6 @@
 {
     "addNewPremium.buttonText": "New contribution",
+    "contribution.PolicyContributionsPanel.title": "Contributions",
     "contribution.openNewTab.buttonText": "Open",
     "contribution.deletePremium.buttonText": "Delete",
     "contribution.addNewPremium.tooltip": "Add new contribution",

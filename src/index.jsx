@@ -6,6 +6,7 @@ import ContributionsPage from "./pages/ContributionsPage";
 import ContributionPage from "./pages/ContributionPage";
 import ContributionOverviewPage from "./pages/ContributionOverviewPage";
 import PoliciesPremiumsOverview from "./components/PoliciesPremiumsOverview";
+import PolicyContributionsPanel from "./components/PolicyContributionsPanel";
 import PremiumPaymentTypePicker from "./pickers/PremiumPaymentTypePicker";
 import PremiumCategoryPicker from "./pickers/PremiumCategoryPicker";
 import messages_en from "./translations/en.json";
@@ -108,6 +109,7 @@ const DEFAULT_CONFIG = {
     }
   ],
   "insuree.FamilyOverview.panels": [PoliciesPremiumsOverview],
+  "policy.Policy.panels": [PolicyContributionsPanel],
 }
 
 export const ContributionModule = (cfg) => {

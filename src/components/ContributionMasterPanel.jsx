@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 
 import { useTheme, styled } from "@mui/material/styles";
 import { Grid } from "@mui/material";
@@ -18,6 +17,7 @@ import {
   WarningBox,
   GRID_RESPONSIVE_STANDARD,
   GRID_RESPONSIVE_FULL,
+  injectIntl,
 } from "@openimis/fe-core";
 import {
   validateReceipt,

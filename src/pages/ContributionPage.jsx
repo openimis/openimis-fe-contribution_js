@@ -1,17 +1,16 @@
 import React, { Component } from "react";
-import { injectIntl } from 'react-intl';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { useTheme, styled } from "@mui/material/styles";
 import {
-    formatMessageWithValues, withModulesManager, withHistory,
+    formatMessageWithValues, withModulesManager, withHistory, injectIntl,
 } from "@openimis/fe-core";
 import ContributionForm from "../components/ContributionForm";
 import { createContribution, updateContribution } from "../actions";
 import { RIGHT_CONTRIBUTION_EDIT } from "../constants";
 
 const StyledDiv = styled("div")(({ theme }) => ({
-  ...theme?.page ?? {},
+  ...(theme?.page ?? {}),
 }));
 
 class ContributionPage extends Component {

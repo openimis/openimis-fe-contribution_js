@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { injectIntl } from 'react-intl';
 import _debounce from 'lodash/debounce';
 
 import { Grid, Checkbox, FormControlLabel } from '@mui/material';
@@ -10,6 +9,7 @@ import {
   GRID_RESPONSIVE_LARGE,
   GRID_RESPONSIVE_FULL,
   GRID_RESPONSIVE_HALF,
+  injectIntl,
 } from '@openimis/fe-core';
 
 import {

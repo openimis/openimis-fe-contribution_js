@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { injectIntl } from 'react-intl';
 import { useTheme, styled } from "@mui/material/styles";
 
 import {
@@ -11,7 +10,7 @@ import {
     DialogTitle
 } from '@mui/material';
 
-import { FormattedMessage } from "@openimis/fe-core";
+import { FormattedMessage, injectIntl } from "@openimis/fe-core";
 
 const StyledButton = styled(Button)(({ theme }) => ({
   '& .primaryButton': theme?.dialog?.primaryButton ?? {},

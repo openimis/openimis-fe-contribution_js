@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 
 import { Paper, Grid, Typography, Divider, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -13,6 +12,7 @@ import {
     withTooltip,
     GetIconComponent,
     GRID_RESPONSIVE_FULL,
+    injectIntl,
 } from "@openimis/fe-core";
 
 import { RIGHT_CONTRIBUTION_ADD } from "../constants";
@@ -20,7 +20,7 @@ import { RIGHT_CONTRIBUTION_ADD } from "../constants";
 const AddIcon = GetIconComponent("Add");
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-    ...theme?.paper?.paper ?? {},
+    ...(theme?.paper?.paper ?? {}),
     '& .paperHeader': theme?.paper?.header ?? {},
     '& .paperHeaderAction': theme?.paper?.action ?? {},
     '& .tableTitle': theme?.table?.title ?? {},
@@ -56,14 +56,18 @@ class PolicyContributionsPanel extends Component {
         return (
             <Grid size={GRID_RESPONSIVE_FULL}>
                 <StyledPaper>
-                    <Grid container alignItems="center" direction="row" className="paperHeader">
+                    <Grid container direction="row" className="paperHeader" sx={{
+                        alignItems: "center"
+                    }}>
                         <Grid size={8}>
                             <Typography className="tableTitle">
                                 {formatMessage(intl, "contribution", "PolicyContributionsPanel.title")}
                             </Typography>
                         </Grid>
                         <Grid size={4}>
-                            <Grid container direction="row" justifyContent="flex-end">
+                            <Grid container direction="row" sx={{
+                                justifyContent: "flex-end"
+                            }}>
                                 <Grid className="paperHeaderAction">
                                     {withTooltip(
                                         button,

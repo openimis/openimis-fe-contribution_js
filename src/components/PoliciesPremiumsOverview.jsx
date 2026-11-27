@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from 'react-intl';
 import _ from "lodash";
 
 import { Paper, IconButton, Grid, Divider, Typography, Tooltip, Button } from "@mui/material";
@@ -23,6 +22,7 @@ import {
     historyPush,
     coreAlert,
     GetIconComponent,
+    injectIntl,
 } from "@openimis/fe-core";
 import {
     fetchPoliciesPremiums,
@@ -40,7 +40,7 @@ const AddIcon = GetIconComponent("Add")
 const DeleteIcon = GetIconComponent("Delete")
 const ReplayIcon = GetIconComponent("Replay")
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...theme?.paper?.paper ?? {},
+  ...(theme?.paper?.paper ?? {}),
   '& .paperHeader': theme?.paper?.header ?? {},
   '& .paperHeaderAction': theme?.paper?.action ?? {},
   '& .tableTitle': theme?.table?.title ?? {},
@@ -286,14 +286,18 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                     onConfirm={this.deleteContribution}
                     onCancel={e => this.setState({ deleteContribution: null })} />
                 <StyledPaper className="paper">
-                    <Grid container alignItems="center" direction="row" className="paperHeader">
+                    <Grid container direction="row" className="paperHeader" sx={{
+                        alignItems: "center"
+                    }}>
                         <Grid size={8}>
                             <Typography className="tableTitle">
                                 {this.header()}
                             </Typography>
                         </Grid>
                         <Grid size={4}>
-                            <Grid container direction="row" justifyContent="flex-end">
+                            <Grid container direction="row" sx={{
+                                justifyContent: "flex-end"
+                            }}>
                                 {actions.map((a, idx) => {
                                     return (
                                         <Grid key={`form-action-${idx}`} className="paperHeaderAction">
@@ -329,7 +333,7 @@ class PoliciesPremiumsOverview extends PagedDataHandler {
                     />
                 </StyledPaper>
             </>
-        )
+        );
     }
 }
 

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { injectIntl } from "react-intl";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { useTheme, styled } from "@mui/material/styles";
-import { GetIconComponent } from "@openimis/fe-core";
+import { GetIconComponent, injectIntl } from "@openimis/fe-core";
 
 const ReplayIcon = GetIconComponent("Replay")
 const People = GetIconComponent("People")

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 
 import { useTheme, styled } from "@mui/material/styles";
 
@@ -10,11 +9,12 @@ import {
   withModulesManager,
   withHistory,
   clearCurrentPaginationPage,
+  injectIntl,
 } from "@openimis/fe-core";
 import ContributionSearcher from "../components/ContributionSearcher";
 
 const StyledDiv = styled("div")(({ theme }) => ({
-  ...theme?.page ?? {},
+  ...(theme?.page ?? {}),
   '& .fab': theme?.fab ?? {},
 }));
 
